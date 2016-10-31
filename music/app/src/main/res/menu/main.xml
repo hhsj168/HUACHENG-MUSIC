@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/set_ring"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:icon="@drawable/ic_menu_ring"
+        android:title="@string/menu_ring"/>
+    <item
+        android:id="@+id/set_more"
+        android:icon="@drawable/ic_menu_more"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_more"/>
+    <item
+        android:id="@+id/set_more_app"
+        android:icon="@drawable/ic_menu_more"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_more_app"/>
+
+</menu>

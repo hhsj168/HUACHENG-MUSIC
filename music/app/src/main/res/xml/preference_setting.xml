@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@android:color/white"
+    android:icon="@drawable/ic_launcher" >
+
+    <PreferenceCategory android:title="歌词/桌面歌词设置"
+         >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="LRC_IS_SHOW"
+            android:summary="显示歌词，实现歌词同步效果"
+            android:title="是否显示歌词" />
+
+        <Preference
+            android:key="SET_FONT_COLOR"
+            android:summary="高亮色:红色 /非高亮色:绿色"
+            android:title="设置歌词字体的颜色" />
+        <Preference
+            android:key="SET_FONT_SIZE"
+            android:summary="高亮色:25/非高亮色:20"
+            android:title="设置歌词字体的大小" />
+        <Preference
+            android:key="SET_FONT_ALPHA"
+            android:summary="高亮色:255/非高亮色:100"
+            android:title="设置歌词字体的透明度" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="设置桌面歌词" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="SetDeskTopLrc"
+            android:summary="显示桌面歌词"
+            android:title="是否显示歌词" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="设置音量" >
+        <Preference
+            android:key="SetStreamVolume"
+            android:summary="点击设置音量"
+            android:title="设置音量" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="其它设置" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="KILLPROCESS"
+            android:summary="杀死进程无法进行后台播放,建议:不杀死"
+            android:title="退出时是否杀死应用进程" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="关于应用/作者信息" >
+        <Preference
+            android:key="ABOUT_AUTHOR"
+            android:summary="点击显示应用/作者信息"
+            android:title="关于应用/作者" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,25 @@
+<com.song.study.view.MyThemeVertucalLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <android.support.design.widget.TabLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/tablayout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/theme_color"
+        app:tabIndicatorColor="@color/whilte"
+        app:tabIndicatorHeight="2dp"
+        app:tabSelectedTextColor="@color/yellow"
+        app:tabTextColor="@color/whilte">
+
+    </android.support.design.widget.TabLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/mviewpage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v4.view.ViewPager>
+</com.song.study.view.MyThemeVertucalLinearLayout>

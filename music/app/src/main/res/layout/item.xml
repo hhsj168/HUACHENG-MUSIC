@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+   
+   <LinearLayout
+        android:id="@+id/linearLayout_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="15dp" >
+
+      
+        <TextView
+            android:id="@+id/musicname_show_textView_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dailog_ok"
+            android:padding="2dp"
+            android:textColor="@color/whilte"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/musicsinger_show_textView_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dailog_ok"
+            android:padding="2dp"
+            android:textColor="@color/whilte"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/musictime_show_textView_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="center"
+        android:paddingRight="10dp"
+        android:text="@string/dailog_ok"
+        android:textColor="@color/whilte" />
+
+</RelativeLayout>

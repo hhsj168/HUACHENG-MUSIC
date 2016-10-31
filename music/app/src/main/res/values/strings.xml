@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">音乐播放器</string>
+    <string name="start_button_text">亲，开始享受音乐吧！</string>
+
+    <!-- not support dialog -->
+    <string name="dialog_title">温馨提示</string>
+    <string name="dialog_msg">当前手机系统版本过低，无法运行！</string>
+    <string name="dailog_ok">确定</string>
+    <string name="dailog_cancle">取消</string>
+
+    <!-- menu -->
+    <string name="menu_more">更多设置</string>
+    <string name="menu_more_app">更多应用</string>
+    <string name="menu_del">删除</string>
+    <string name="menu_ring">用作铃声</string>
+    <string name="set_ring_dialog_title">设置铃声</string>
+
+    <!-- dilog  set  ring -->
+    <string-array name="set_ring_dialog_msg">
+        <item name="type_ring">作为手机来电铃声</item>
+        <item name="type_alarm">作为手机闹铃铃声</item>
+        <item name="type_noti">作为手机通知铃声</item>
+        <item name="type_all">作为手机所有声音</item>
+    </string-array>
+
+    <!-- dialog -->
+    <string name="setfontcolor_dialog_title">设置歌词字体的颜色</string>
+    <string name="setfontsize_dialog_title">设置歌词字体的大小</string>
+     <string name="setfontalpha_dialog_title">设置歌词字体的透明度</string>
+    <string name="setstreamvolumn_dialog_title">设置系统音量</string>
+
+    <string-array name="set_fontcolor_dialog_msg">
+        <item name="0">红色</item>
+        <item name="1">黑色</item>
+        <item name="2">蓝绿色</item>
+        <item name="3">蓝色</item>
+        <item name="4">深灰色</item>
+        <item name="5">灰色</item>
+        <item name="6">绿色</item>
+        <item name="7">浅灰色</item>
+        <item name="8">品红色</item>
+        <item name="9">白色</item>
+        <item name="10">黄色</item>
+    </string-array>
+
+</resources>

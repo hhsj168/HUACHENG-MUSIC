@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="whilte">#FFFFFF</color>
+    <color name="black">#111111</color>
+    <color name="red">#FF0000</color>
+    <color name="yellow">#FFFF33</color>
+
+    <color name="theme_color">#256899</color>
+
+    <color name="theme_color_press">#252399</color>
+
+</resources>
