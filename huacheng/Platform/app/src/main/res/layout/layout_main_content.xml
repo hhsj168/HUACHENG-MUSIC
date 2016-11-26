@@ -1,24 +1,16 @@
-<com.song.study.view.MyThemeVertucalLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent"
-                                                 android:orientation="vertical">
-
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <android.support.design.widget.TabLayout
-        android:id="@+id/tablayout"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/theme_color"
-        app:tabIndicatorColor="@color/whilte"
-        app:tabIndicatorHeight="2dp"
-        app:tabSelectedTextColor="@color/yellow"
-        app:tabTextColor="@color/whilte">
+        android:layout_height="60dp">
 
     </android.support.design.widget.TabLayout>
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/mviewpage"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -28,13 +20,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_gravity="bottom"
         android:orientation="vertical">
 
         <android.support.v4.widget.ContentLoadingProgressBar
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/red"/>
+            android:background="@color/colorPrimaryDark"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,12 +36,12 @@
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="10dp"/>
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/ic_launcher"/>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -59,17 +50,17 @@
                     android:layout_height="0dp"
                     android:layout_weight="1.1"
                     android:gravity="center_vertical"
-                    android:text="我是你的什么"
-                    android:textColor="@color/black"
+                    android:text="最初的梦想"
+                    android:textColor="@color/my_dark"
                     android:textSize="12dp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1.1"
+                    android:layout_weight="0.9"
                     android:gravity="center_vertical"
-                    android:text="张学友"
-                    android:textColor="@color/black"
+                    android:text="范玮琪"
+                    android:textColor="@color/my_dark"
                     android:textSize="10dp"/>
             </LinearLayout>
 
@@ -78,21 +69,23 @@
                 android:layout_height="40dp">
 
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_centerInParent="true"/>
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_launcher"/>
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="40dp"
-                android:layout_height="40dp">
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp">
 
                 <ImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:layout_centerInParent="true"/>
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_launcher"/>
             </RelativeLayout>
-
         </LinearLayout>
     </LinearLayout>
-</com.song.study.view.MyThemeVertucalLinearLayout>
+</LinearLayout>
