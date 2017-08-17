@@ -51,13 +51,13 @@ public class CircleImage extends ImageView {
             if (null != b) {
                 bitmap = b.copy(Bitmap.Config.ARGB_8888, true);
             } else {
-                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+                bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         if (null == bitmap) {
-            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+            bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         }
         Bitmap roundBitmap = getCroppedBitmap(bitmap, getWidth());
         canvas.drawBitmap(roundBitmap, 0, 0, null);

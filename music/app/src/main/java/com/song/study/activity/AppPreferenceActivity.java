@@ -28,9 +28,7 @@ import com.song.study.view.LrcView;
 import com.song.study.view.MyFloatView;
 import com.song.study.service.MusicService;
 
-public class AppPreferenceActivity extends PreferenceActivity
-        implements
-        OnPreferenceChangeListener {
+public class AppPreferenceActivity extends PreferenceActivity implements OnPreferenceChangeListener {
     private static final String TAG = "AppPreferenceActivity";
 
     private Preference setFontSizePreference;

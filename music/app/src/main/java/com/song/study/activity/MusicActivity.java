@@ -261,7 +261,6 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
 
     @Override
     public void onClick(View v) {
-        // TODO Auto-generated method stub
         // 将bundle清空，填充新的内容
         // 由于Activity与Receiver之间通信，主要是传递哪个按钮被按下了，当前使用什么播放模式
         // 以及播放列表中哪首歌被选择了， 所以在发送的广播中，使用两个整数代表命令与数据
@@ -318,15 +317,13 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
                 if (random_model_open == false) {
                     data[0] = Constant.CMD_RANDOM;
                     data[1] = Constant.CMD_RANDOM;
-                    mImageView_music_random
-                            .setImageResource(R.drawable.play_random_sel);
+                    mImageView_music_random.setImageResource(R.drawable.play_random_sel);
                     s = "随机播放已经打开";
                     random_model_open = true;
                 } else {
                     data[0] = Constant.CMD_ORDER_BY_ORDER;
                     data[1] = Constant.CMD_ORDER_BY_ORDER;
-                    mImageView_music_random
-                            .setImageResource(R.drawable.play_random);
+                    mImageView_music_random.setImageResource(R.drawable.play_random);
                     s = "随机播放已经关闭";
                     random_model_open = false;
                 }
@@ -345,7 +342,6 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
 
     @Override
     protected void onDestroy() {
-        // TODO Auto-generated method stub
         super.onDestroy();
         if (Constant.D)
             Log.e(TAG, "onDestroy()");
@@ -356,15 +352,12 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO Auto-generated method stub
         getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // TODO Auto-generated method stub
-
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             mRelativeLayout.setBackgroundResource(R.drawable.listbg1);
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -381,8 +374,7 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
                 break;
             case R.id.set_more:
                 startActivity(new Intent(this, AppPreferenceActivity.class));
-                overridePendingTransition(android.R.anim.slide_in_left,
-                        android.R.anim.slide_out_right);
+                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
                 break;
             case R.id.set_more_app:
                 //来打开广告墙
@@ -399,9 +391,8 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
     private void showSetRingDialog() {
 
         new AlertDialog.Builder(this)
-                .setTitle(
-                        getResources()
-                                .getString(R.string.set_ring_dialog_title))
+                .setTitle(getResources()
+                        .getString(R.string.set_ring_dialog_title))
                 .setIcon(R.drawable.info)
                 .setSingleChoiceItems(R.array.set_ring_dialog_msg, 0,
                         new DialogInterface.OnClickListener() {
@@ -429,8 +420,7 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
                 MediaStore.Audio.Media.TITLE + "=?", new String[]{title},
                 MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
         if (cursor.moveToFirst()) {
-            path = cursor.getString(cursor
-                    .getColumnIndex(MediaStore.Audio.Media.DATA));
+            path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
         }
         cursor.close();
         return path;
@@ -492,18 +482,13 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
                     .toString();
             switch (id) {
                 case Constant.RINGTONE:
-                    RingtoneManager.setActualDefaultRingtoneUri(this,
-                            RingtoneManager.TYPE_RINGTONE, newUri);
-                    Toast.makeText(MusicActivity.this,
-                            "已经将   " + title + " 设置为手机铃声", Toast.LENGTH_SHORT)
-                            .show();
+                    RingtoneManager.setActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE, newUri);
+                    Toast.makeText(MusicActivity.this, "已经将   " + title + " 设置为手机铃声", Toast.LENGTH_SHORT).show();
                     break;
                 case Constant.NOTIFICATION:
                     RingtoneManager.setActualDefaultRingtoneUri(this,
                             RingtoneManager.TYPE_NOTIFICATION, newUri);
-                    Toast.makeText(MusicActivity.this,
-                            "已经将   " + title + " 设置为手机通知铃声", Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(MusicActivity.this, "已经将   " + title + " 设置为手机通知铃声", Toast.LENGTH_SHORT).show();
                     break;
                 case Constant.ALARM:
                     RingtoneManager.setActualDefaultRingtoneUri(this,
@@ -513,10 +498,8 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
                             .show();
                     break;
                 case Constant.ALL:
-                    RingtoneManager.setActualDefaultRingtoneUri(this,
-                            RingtoneManager.TYPE_ALL, newUri);
-                    Toast.makeText(MusicActivity.this,
-                            "已经将   " + title + " 设置为手机所有所有", Toast.LENGTH_SHORT)
+                    RingtoneManager.setActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALL, newUri);
+                    Toast.makeText(MusicActivity.this, "已经将   " + title + " 设置为手机所有所有", Toast.LENGTH_SHORT)
                             .show();
                     break;
                 default:
@@ -528,14 +511,11 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // TODO Auto-generated method stub
         // 处理精准度改变
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        // TODO Auto-generated method stub
-
 		/* 手机晃动，当前时间 */
         long current_time = java.lang.System.currentTimeMillis();
         long diffTime = (current_time - last_time);

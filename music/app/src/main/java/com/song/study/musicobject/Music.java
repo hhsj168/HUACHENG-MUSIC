@@ -1,6 +1,13 @@
 package com.song.study.musicobject;
 
+import android.net.Uri;
+
 public class Music {
+
+
+    public static final String MUSIC_TYPE_MP3 = "mp3";
+    public static final String MUSIC_TYPE_WAV = "wav";
+    public static final String MUSIC_TYPE_WMA = "wma";
 
     /**
      * 歌曲文件的名称 /带后缀(eg：.mp3)
@@ -113,4 +120,33 @@ public class Music {
         this.year = year;
     }
 
+    private long id;
+
+    private long album_id;
+
+    private Uri uri;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getAlbum_id() {
+        return album_id;
+    }
+
+    public void setAlbum_id(long album_id) {
+        this.album_id = album_id;
+    }
+
+    public Uri getUri() {
+        return uri;
+    }
+
+    public void setUri(Uri uri) {
+        this.uri = uri;
+    }
 }

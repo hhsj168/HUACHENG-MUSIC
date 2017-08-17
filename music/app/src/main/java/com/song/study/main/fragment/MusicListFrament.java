@@ -48,8 +48,7 @@ public class MusicListFrament extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
-            savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.musiclist, null);
         mListView = (ListView) view.findViewById(R.id.listView_id);
         handler = new Handler() {
@@ -65,7 +64,7 @@ public class MusicListFrament extends Fragment {
             @Override
             public void run() {
                 musics = MusicUtil.getAllMusics(getActivity().getApplicationContext());
-                handler.sendEmptyMessageDelayed(REQEST_CODE, 1000);
+                handler.sendEmptyMessageDelayed(REQEST_CODE, 500L);
             }
         }).start();
         // 启动播放服务
@@ -91,8 +90,7 @@ public class MusicListFrament extends Fragment {
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
-                        mListView.setBackgroundResource(android.R
-                                .color.background_dark);
+                        mListView.setBackgroundResource(android.R.color.background_dark);
                         break;
                 }
                 return false;

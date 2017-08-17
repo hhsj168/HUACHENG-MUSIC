@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.song.study.R;
@@ -46,6 +47,7 @@ public class MusicAdapter extends BaseAdapter {
             holder.music_name = (TextView) arg1.findViewById(R.id.musicname_show_textView_id);
             holder.music_singer = (TextView) arg1.findViewById(R.id.musicsinger_show_textView_id);
             holder.music_time = (TextView) arg1.findViewById(R.id.musictime_show_textView_id);
+            holder.music_image = (ImageView) arg1.findViewById(R.id.imageView_id);
             arg1.setTag(holder);
         } else {
             holder = (ViewHolder) arg1.getTag();
@@ -53,6 +55,7 @@ public class MusicAdapter extends BaseAdapter {
         holder.music_name.setText(listMusics.get(arg0).getTitle());
         holder.music_singer.setText(listMusics.get(arg0).getSinger());
         holder.music_time.setText(MusicUtil.formatTime(listMusics.get(arg0).getTime()));
+        holder.music_image.setImageBitmap(MusicUtil.getAlbumPhoto(context,listMusics.get(arg0).getUri()));
         return arg1;
     }
 
@@ -60,5 +63,6 @@ public class MusicAdapter extends BaseAdapter {
         TextView music_name;
         TextView music_singer;
         TextView music_time;
+        ImageView music_image;
     }
 }

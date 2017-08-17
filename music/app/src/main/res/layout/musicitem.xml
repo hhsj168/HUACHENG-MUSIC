@@ -10,7 +10,7 @@
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"
         android:contentDescription="@string/app_name"
-        android:padding="12dp"
+        android:padding="6dp"
         android:src="@drawable/itemicon" />
 
     <LinearLayout

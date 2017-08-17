@@ -28,17 +28,15 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import com.song.study.MyApplication;
 import com.song.study.R;
 import com.song.study.activity.AboutAuthor;
-import com.song.study.main.MainActivity;
-import com.song.study.main.MainTestActivity;
 import com.song.study.activity.MusicActivity;
-import com.song.study.musicobject.Music;
 import com.song.study.conts.Constant;
+import com.song.study.musicobject.Music;
 import com.song.study.musicutil.LrcProcess;
 import com.song.study.musicutil.LrcProcess.LrcContent;
-import com.song.study.view.LrcView;
 import com.song.study.musicutil.MusicUtil;
-import com.song.study.view.MyFloatView;
 import com.song.study.receiver.InOutCallReceiver;
+import com.song.study.view.LrcView;
+import com.song.study.view.MyFloatView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +47,7 @@ import java.util.Random;
  *
  * @author Kevin Song
  */
-public class MusicService extends Service {
+public class MusicService2 extends Service {
 
     // 自定义广播接收器的ACTION
     public static final String ACTION = "MUSIC";
@@ -88,7 +86,7 @@ public class MusicService extends Service {
      * 处理线程发过来的信息
      */
     private Handler mHandler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
+        public void handleMessage(Message msg) {
             switch (msg.what) {
                 case WHAT:// 将当前播放歌曲时间除以总时间得到百分比
                     int pos = mediaPlayer.getCurrentPosition()

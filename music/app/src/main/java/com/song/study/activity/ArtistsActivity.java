@@ -22,7 +22,7 @@ import com.song.study.conts.Constant;
  *
  * @author Kevin Song
  **/
-public class ArtistsActivity extends BaseActivity {
+public class ArtistsActivity extends BaseActivity implements OnItemClickListener {
     private ListView mListView;
 
     @Override
@@ -37,22 +37,7 @@ public class ArtistsActivity extends BaseActivity {
         AlbumsAdapter2 adapter = new AlbumsAdapter2(this);
         mListView.setAdapter(adapter);
 
-        mListView.setOnItemClickListener(new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-                                    long arg3) {
-                Intent intent = new Intent(ArtistsActivity.this,
-                        MusicActivity.class);
-                intent.putExtra("index", arg2);
-                // 艺术家我们播放全部就行了
-                intent.putExtra("FLAG", Constant.FLAG_ALL);
-                startActivity(intent);
-                // 设置ACT跳转之间的动画
-                AnimCommon.set(android.R.anim.slide_in_left,
-                        android.R.anim.slide_out_right);
-            }
-        });
+        mListView.setOnItemClickListener(this);
         mListView.setOnTouchListener(new OnTouchListener() {
 
             @Override
@@ -60,10 +45,8 @@ public class ArtistsActivity extends BaseActivity {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     mListView.setBackgroundResource(R.drawable.listbg1);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    mListView
-                            .setBackgroundResource(android.R.color.background_dark);
+                    mListView.setBackgroundResource(android.R.color.background_dark);
                 }
-
                 return false;
             }
         });
@@ -71,7 +54,17 @@ public class ArtistsActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO Auto-generated method stub
         return true;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+        Intent intent = new Intent(ArtistsActivity.this, MusicActivity.class);
+        intent.putExtra("index", arg2);
+        // 艺术家我们播放全部就行了
+        intent.putExtra("FLAG", Constant.FLAG_ALL);
+        startActivity(intent);
+        // 设置ACT跳转之间的动画
+        AnimCommon.set(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
     }
 }
