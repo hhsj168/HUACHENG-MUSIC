@@ -95,8 +95,8 @@ public class MainActivity extends BaseActivity {
         tabLayout.setupWithViewPager(viewPager);
     }
 
-
     class MyFragmentPageAdapter extends FragmentPagerAdapter {
+
         FragmentManager mFragmentManager;
 
         FragmentTransaction mCurTransaction;
@@ -204,27 +204,26 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showNotSupportDialog(int verson) {
-
         new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.dialog_title))
                 .setIcon(R.drawable.info)
                 .setTitle("targetSdkVersion is:" + verson + "not support!")
-                .setPositiveButton(
-                        getResources().getString(R.string.dailog_ok),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    android.os.Process.killProcess(android.os.Process.myPid());
-                                    finish();
-                                } catch (Exception e) {
-                                    finish();
-                                }
-                                dialog.dismiss();
-                            }
-                        }).show();
-
+                .setPositiveButton(getResources().getString(R.string.dailog_ok), clickListener)
+                .show();
     }
+
+    private DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            try {
+                android.os.Process.killProcess(android.os.Process.myPid());
+                finish();
+            } catch (Exception e) {
+                finish();
+            }
+            dialog.dismiss();
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

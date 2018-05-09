@@ -24,8 +24,12 @@ import com.song.study.conts.Constant;
 import com.song.study.musicutil.MusicUtil;
 import com.song.study.service.MusicService;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
+/**
+ * 全部歌曲列表
+ */
 public class MusicListFrament extends Fragment {
 
     private static final String TAG = "MusicListFrament";
@@ -38,8 +42,7 @@ public class MusicListFrament extends Fragment {
     // 是否杀死进程
     private boolean is_kill_process = false;
 
-    private Handler handler;
-
+    private final Handler handler = new MyHandler(this);
     private final int REQEST_CODE = 0x0000;
 
     @Override
@@ -51,15 +54,6 @@ public class MusicListFrament extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.musiclist, null);
         mListView = (ListView) view.findViewById(R.id.listView_id);
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                if (msg.what == REQEST_CODE) {
-                    musicAdapter = new MusicAdapter(getActivity(), musics);
-                    mListView.setAdapter(musicAdapter);
-                }
-            }
-        };
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -105,6 +99,30 @@ public class MusicListFrament extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences("setting", Activity.MODE_PRIVATE);
         is_kill_process = sharedPreferences.getBoolean("KILLPROCESS", false);
         super.onStart();
+    }
+
+
+    private static class MyHandler extends Handler {
+        private WeakReference<MusicListFrament> mFragment;
+
+        public MyHandler(MusicListFrament frament) {
+            this.mFragment = new WeakReference<MusicListFrament>(frament);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            if (mFragment.get() != null) {
+                mFragment.get().handleMessage(msg);
+            }
+
+        }
+    }
+
+    private void handleMessage(Message msg) {
+        if (msg.what == REQEST_CODE) {
+            musicAdapter = new MusicAdapter(getActivity(), musics);
+            mListView.setAdapter(musicAdapter);
+        }
     }
 
 }

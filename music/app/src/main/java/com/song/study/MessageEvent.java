@@ -1,6 +1,7 @@
 package com.song.study;
 
 public class MessageEvent {
+
     private String message;
 
     private Object object;
@@ -17,12 +18,11 @@ public class MessageEvent {
         this.message = message;
     }
 
-
-    public Object getData(){
+    public Object getData() {
         return this.object;
     }
 
-    public void setData(Object object){
+    public void setData(Object object) {
         this.object = object;
     }
 }

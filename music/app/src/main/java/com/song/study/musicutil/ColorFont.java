@@ -12,9 +12,19 @@ import android.graphics.Color;
 @SuppressLint("NewApi")
 public class ColorFont {
 
-    public static final int[] colors = {Color.RED, Color.BLACK, Color.CYAN,
-            Color.BLUE, Color.DKGRAY, Color.GRAY, Color.GREEN, Color.LTGRAY,
-            Color.MAGENTA, Color.WHITE, Color.YELLOW};
+    public static final int[] COLORS = {
+            Color.RED,
+            Color.BLACK,
+            Color.CYAN,
+            Color.BLUE,
+            Color.DKGRAY,
+            Color.GRAY,
+            Color.GREEN,
+            Color.LTGRAY,
+            Color.MAGENTA,
+            Color.WHITE,
+            Color.YELLOW
+    };
 
     private int color_current;// 歌词字体高亮色的颜色
     private int color_not_current;// 歌词字体非高亮色的颜色
@@ -27,22 +37,13 @@ public class ColorFont {
      * 构造函数无参
      */
     public ColorFont(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(
-                "setting", Activity.MODE_PRIVATE);
-        this.color_current = colors[sharedPreferences.getInt(
-                "LRCFontColorCurrent", 0)];
-        this.color_not_current = colors[sharedPreferences.getInt(
-                "LRCFontColorNotCurrent", 6)];
-
-        this.font_current_size = sharedPreferences.getInt("LRCFontSizeCurrent",
-                25);
-        this.font_not_current_size = sharedPreferences.getInt(
-                "LRCFontSizeNotCurrent", 20);
-
-        this.font_current_alpha = sharedPreferences.getInt(
-                "LRCFontAlphaCurrent", 255);// 默认值255,完全不透明。注：alpha(0,255)
-        this.font_not_current_alpha = sharedPreferences.getInt(
-                "LRCFontAlphaNotCurrent", 100);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("setting", Activity.MODE_PRIVATE);
+        this.color_current = COLORS[sharedPreferences.getInt("LRCFontColorCurrent", 0)];
+        this.color_not_current = COLORS[sharedPreferences.getInt("LRCFontColorNotCurrent", 6)];
+        this.font_current_size = sharedPreferences.getInt("LRCFontSizeCurrent", 25);
+        this.font_not_current_size = sharedPreferences.getInt("LRCFontSizeNotCurrent", 20);
+        this.font_current_alpha = sharedPreferences.getInt("LRCFontAlphaCurrent", 255);// 默认值255,完全不透明。注：alpha(0,255)
+        this.font_not_current_alpha = sharedPreferences.getInt("LRCFontAlphaNotCurrent", 100);
     }
 
     public ColorFont() {
@@ -62,8 +63,7 @@ public class ColorFont {
      * @param font_current_size     歌词字体高亮色的大小
      * @param font_not_current_size 歌词字体非高亮色的大小
      */
-    public ColorFont(int color_current, int color_not_current,
-                     int font_current_size, int font_not_current_size) {
+    public ColorFont(int color_current, int color_not_current, int font_current_size, int font_not_current_size) {
         this.color_current = color_current;
         this.color_not_current = color_not_current;
         this.font_current_size = font_current_size;

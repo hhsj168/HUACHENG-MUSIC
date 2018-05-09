@@ -254,29 +254,23 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // save
-                        SharedPreferences.Editor editor = sharedPreferences
-                                .edit();
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
                         if (index == 0) {
-                            LrcView.colorFont
-                                    .setColor_current(ColorFont.colors[which]);
-                            MyFloatView.colorFont
-                                    .setColor_current(ColorFont.colors[which]);
+                            LrcView.colorFont.setColor_current(ColorFont.COLORS[which]);
+                            MyFloatView.colorFont.setColor_current(ColorFont.COLORS[which]);
                             setFontColorPreference.setSummary("高亮色："
                                     + colors[which] + "/" + "非高亮色："
                                     + colors[color_index2]);
                             editor.putInt("LRCFontColorCurrent", which);
                         } else {
-                            LrcView.colorFont
-                                    .setColor_not_current(ColorFont.colors[which]);
-                            MyFloatView.colorFont
-                                    .setColor_not_current(ColorFont.colors[which]);
+                            LrcView.colorFont.setColor_not_current(ColorFont.COLORS[which]);
+                            MyFloatView.colorFont.setColor_not_current(ColorFont.COLORS[which]);
                             setFontColorPreference.setSummary("高亮色："
                                     + colors[color_index1] + "/" + "非高亮色："
                                     + colors[which]);
                             editor.putInt("LRCFontColorNotCurrent", which);
                         }
                         editor.commit();
-
                     }
                 })
                 .setPositiveButton(R.string.dailog_ok,

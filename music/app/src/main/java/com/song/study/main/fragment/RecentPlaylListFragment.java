@@ -22,6 +22,9 @@ import com.song.study.service.MusicService;
 
 import java.util.List;
 
+/**
+ * 最近播放列表
+ */
 public class RecentPlaylListFragment extends ListFragment {
 
     private ListView mListView;
@@ -34,11 +37,8 @@ public class RecentPlaylListFragment extends ListFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
-            savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.musiclist, container, false);
-
         mListView = (ListView) view.findViewById(R.id.listView_id);
         mListView.setBackgroundResource(R.drawable.listbg1);
         List<Music> listMusics = MusicService.recentMusics;
@@ -54,24 +54,20 @@ public class RecentPlaylListFragment extends ListFragment {
                 intent.putExtra("FLAG", Constant.FLAG_RECENT);
                 startActivity(intent);
                 // 设置ACT跳转之间的动画
-                AnimCommon.set(android.R.anim.slide_in_left,
-                        android.R.anim.slide_out_right);
+                AnimCommon.set(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
             }
         });
         mListView.setOnTouchListener(new OnTouchListener() {
-
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     mListView.setBackgroundResource(R.drawable.listbg1);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    mListView
-                            .setBackgroundResource(android.R.color.background_dark);
+                    mListView.setBackgroundResource(android.R.color.background_dark);
                 }
                 return false;
             }
         });
-
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 }

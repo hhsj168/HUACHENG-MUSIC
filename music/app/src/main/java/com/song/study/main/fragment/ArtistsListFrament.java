@@ -19,8 +19,7 @@ import com.song.study.musicutil.AnimCommon;
 import com.song.study.conts.Constant;
 
 /***
- * 艺术家界面
- *
+ * 艺术家列表
  * @author Kevin Song
  **/
 public class ArtistsListFrament extends ListFragment {

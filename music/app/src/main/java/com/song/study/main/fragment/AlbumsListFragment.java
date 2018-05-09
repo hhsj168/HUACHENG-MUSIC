@@ -20,6 +20,9 @@ import com.song.study.musicutil.MusicUtil;
 
 import java.util.List;
 
+/**
+ * 专辑列表
+ */
 public class AlbumsListFragment extends ListFragment {
     private AlbumsAdapter albumsAdapter;
     private List<Music> albums;
