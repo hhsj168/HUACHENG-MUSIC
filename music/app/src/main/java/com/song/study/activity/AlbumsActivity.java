@@ -1,6 +1,5 @@
 package com.song.study.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -57,7 +56,6 @@ public class AlbumsActivity extends BaseActivity {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     listView.setBackgroundResource(android.R.color.background_dark);
                 }
-
                 return false;
             }
         });

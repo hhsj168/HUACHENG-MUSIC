@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.util.TypedValue;
 
 import com.song.study.R;
 import com.song.study.musicobject.Music;
@@ -249,7 +248,7 @@ public class MusicUtil {
             InputStream in = null;
             try {
                 in = res.openInputStream(uri);
-                return BitmapFactory.decodeStream(in, null, sBitmapOptions);
+                return BitmapFactory.decodeStream(in, null, S_BITMAP_OPTIONS);
             } catch (FileNotFoundException ex) {
                 Bitmap bm = getArtworkFromFile(context, song_id, album_id);
                 if (bm != null) {
@@ -307,7 +306,7 @@ public class MusicUtil {
                     bm = BitmapFactory.decodeFileDescriptor(fd);
                 }
             } else {
-                Uri uri = ContentUris.withAppendedId(sArtworkUri, albumid);
+                Uri uri = ContentUris.withAppendedId(S_ARTWORK_URI, albumid);
                 ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri, "r");
                 if (pfd != null) {
                     FileDescriptor fd = pfd.getFileDescriptor();
@@ -329,7 +328,7 @@ public class MusicUtil {
         return BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher, opts);
     }
 
-    private static final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
-    private static final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
+    private static final Uri S_ARTWORK_URI = Uri.parse("content://media/external/audio/albumart");
+    private static final BitmapFactory.Options S_BITMAP_OPTIONS = new BitmapFactory.Options();
     private static Bitmap mCachedBit = null;
 }

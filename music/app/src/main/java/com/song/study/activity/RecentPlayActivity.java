@@ -70,7 +70,6 @@ public class RecentPlayActivity extends BaseActivity {
 
     @Override
     protected void onStart() {
-        // TODO Auto-generated method stub
         super.onStart();
         listMusics = MusicService.recentMusics;
         adapter.notifyDataSetChanged();

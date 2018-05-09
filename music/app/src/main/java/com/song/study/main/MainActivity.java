@@ -1,7 +1,6 @@
 package com.song.study.main;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -16,7 +15,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.Toast;
 
@@ -29,15 +27,8 @@ import com.song.study.main.fragment.RecentPlaylListFragment;
 import com.song.study.musicutil.AnimCommon;
 import com.song.study.service.MusicService;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 public class MainActivity extends BaseActivity {
 
@@ -267,8 +258,7 @@ public class MainActivity extends BaseActivity {
                     stopService(new Intent(this, MusicService.class));
                     android.os.Process.killProcess(android.os.Process.myPid());
                 }
-                overridePendingTransition(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
         }
         return super.onKeyDown(keyCode, event);

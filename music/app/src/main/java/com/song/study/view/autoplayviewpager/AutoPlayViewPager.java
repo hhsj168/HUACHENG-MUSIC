@@ -196,7 +196,6 @@ public class AutoPlayViewPager extends ViewPager {
 
     public void startAutoFlip() {
         mStartAutoFlip = true;
-
         updateFlipping();
     }
 
@@ -218,7 +217,6 @@ public class AutoPlayViewPager extends ViewPager {
             super.setAdapter(mAdapterWrapper);
             super.setCurrentItem(mAdapterWrapper.getFisrtPosition(), false);
         }
-        startAutoFlip();
     }
 
     public void setFlipInterval(long milliseconds) {

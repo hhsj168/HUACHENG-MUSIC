@@ -53,7 +53,6 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
 
         // 改变PreferenceActivity保存数据的使用的XML文件的名字
@@ -120,7 +119,6 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
 
     @Override
     public boolean onPreferenceChange(Preference arg0, Object arg1) {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -185,12 +183,10 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
             }
 
             @Override
@@ -328,8 +324,6 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
 
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {
-                        // TODO Auto-generated method stub
-
                     }
 
                     @Override
@@ -351,7 +345,6 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
 
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {
-                        // TODO Auto-generated method stub
                     }
 
                     @Override
@@ -436,8 +429,6 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
 
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {
-                        // TODO Auto-generated method stub
-
                     }
 
                     @Override
@@ -459,7 +450,6 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
 
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {
-                        // TODO Auto-generated method stub
                     }
 
                     @Override

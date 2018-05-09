@@ -8,6 +8,7 @@ import android.telephony.TelephonyManager;
 
 import com.song.study.activity.MusicActivity;
 import com.song.study.conts.Constant;
+import com.song.study.conts.IntentKeywords;
 import com.song.study.service.MusicService;
 
 /**
@@ -23,7 +24,6 @@ public class InOutCallReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context arg0, Intent arg1) {
-        // TODO Auto-generated method stub
         // 获取电话服务，并监听电话的状态
         mTelephonyManager = (TelephonyManager) arg0
                 .getSystemService(Context.TELEPHONY_SERVICE);
@@ -39,7 +39,7 @@ public class InOutCallReceiver extends BroadcastReceiver {
             case TelephonyManager.CALL_STATE_RINGING:
                 data[0] = Constant.CMD_PLAY;
                 data[1] = 0;
-                bundle.putIntArray(MusicActivity.KEY, data);
+                bundle.putIntArray(IntentKeywords.KEY, data);
                 // 将命令及数据打包到Intent里
                 intent.replaceExtras(bundle);
                 // 发送广播

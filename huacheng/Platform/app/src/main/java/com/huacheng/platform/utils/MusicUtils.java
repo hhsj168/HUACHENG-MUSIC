@@ -47,6 +47,13 @@ public class MusicUtils {
         return c;
     }
 
+    /**
+     * 获取专辑id
+     *
+     * @param context
+     * @param album_id
+     * @return
+     */
     private String getAlbumArt(Context context, int album_id) {
         String mUriAlbums = "content://media/external/audio/albums";
         String[] projection = new String[]{"album_art"};

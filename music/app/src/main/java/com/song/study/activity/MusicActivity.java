@@ -29,6 +29,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.song.study.MessageEvent;
 import com.song.study.R;
 import com.song.study.base.BaseActivity;
 import com.song.study.musicobject.Music;
@@ -37,25 +38,30 @@ import com.song.study.view.LrcView;
 import com.song.study.musicutil.MusicUtil;
 import com.song.study.service.MusicService;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author 顾修忠
+ * @author Kevin Song
  * @category 播放音乐的界面
  */
 public class MusicActivity extends BaseActivity implements OnClickListener,
-        SensorEventListener {
+        SensorEventListener, MusicService.Notificationer {
 
     public static final String KEY = "CMD";
     private static final String TAG = "MusicActivity";
     // 摇晃的速度，越小灵敏度越高
     private static final int HOLD_SPEED = 2400;
-    public static TextView mTextView_music_name, mTextView_music_singer;
     public static LrcView mTextView_show_lrc;
-    public static ImageView mImageView_music_play;
-    public static SeekBar mSeekBar;
-    public static TextView mTextView_music_start_time,
+    public TextView mTextView_music_name;
+    public TextView mTextView_music_singer;
+    public ImageView mImageView_music_play;
+    public SeekBar mSeekBar;
+    public TextView mTextView_music_start_time,
             mTextView_music_end_time;
     // 用户发送广播
     Intent intent = new Intent(MusicService.ACTION);
@@ -79,13 +85,11 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //广告
-        if (Constant.D)
-            Log.e(TAG, "onCreate()");
+        EventBus.getDefault().register(this);
         // 设置布局文件，显示界面
         setContentView(R.layout.playmusic);
         intitView();
-
+        MusicService.addListener(this);
         // 启动播放服务
         this.startService(new Intent(this, MusicService.class));
 
@@ -104,13 +108,8 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
         if (flag_RE == 3) {
             return;
         }
-        if (Constant.D)
-            Log.e(TAG, "onStart()");
         mImageView_music_play.setImageResource(R.drawable.ic_media_pause);
         int flag = getIntent().getIntExtra("FLAG", 0);
-        if (Constant.D)
-            Log.e(TAG, "------FLAG---" + flag);
-
         if (flag == Constant.FLAG_ALL) {
             musics.clear();
             musics = MusicUtil.getAllMusics(getApplicationContext());
@@ -123,11 +122,8 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
             this.sendBroadcast(intent);
         } else if (flag == Constant.FLAG_PART) {
             String albumname = getIntent().getStringExtra("albumname");
-            if (Constant.D)
-                Log.e(TAG, "-----------" + albumname);
             musics.clear();
-            musics = MusicUtil.getMusicInOneAlum(getApplicationContext(),
-                    albumname);
+            musics = MusicUtil.getMusicInOneAlum(getApplicationContext(), albumname);
             data[0] = Constant.CMD_PLAY_ALBUM_SPEC;
             data[1] = 0;
             bundle.putIntArray(KEY, data);
@@ -147,8 +143,6 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
             // 发送广播更改专辑
             this.sendBroadcast(intent);
         }
-        if (Constant.D)
-            Log.e(TAG, "--musics.size()---" + musics.size());
         if (musics.size() == 0) {
             return;
         }
@@ -171,9 +165,6 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
 
     @Override
     protected void onResume() {
-        // TODO Auto-generated method stub
-        if (Constant.D)
-            Log.e(TAG, "onResume()");
         super.onResume();
         SharedPreferences preferences = getSharedPreferences("setting",
                 Activity.MODE_PRIVATE);
@@ -207,26 +198,9 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
         this.sendBroadcast(intent);
     }
 
-    @Override
-    protected void onPause() {
-        // TODO Auto-generated method stub
-        if (Constant.D)
-            Log.e(TAG, "onPause()");
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        if (Constant.D)
-            Log.e(TAG, "onStop()");
-        super.onStop();
-    }
 
     @Override
     protected void onRestart() {
-        // TODO Auto-generated method stub
-        if (Constant.D)
-            Log.e(TAG, "onRestart()");
         super.onRestart();
         flag_RE = 3;
     }
@@ -340,14 +314,29 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
         this.sendBroadcast(intent);
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        if (event.getMessage().equals("load_song")) {
+            int current_index = (int) event.getData();
+            mImageView_music_play.setImageResource(R.drawable.ic_media_pause);
+            mTextView_music_name.setText(musics.get(current_index).getTitle());
+            mTextView_music_singer.setText(musics.get(current_index).getSinger());
+            mTextView_music_end_time.setText(MusicUtil.formatTime(musics.get(current_index).getTime()));
+        } else if (event.getMessage().equals("play_song")) {
+            mImageView_music_play.setImageResource(R.drawable.ic_media_pause);
+        } else if (event.getMessage().equals("pause_song")) {
+            mImageView_music_play.setImageResource(R.drawable.ic_media_play);
+        }
+        // 更新界面组件
+    }
+
     @Override
     protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
-        if (Constant.D)
-            Log.e(TAG, "onDestroy()");
         // 解除加速度传感器
         // mSensorManager.unregisterListener(this);
-        //广告：以下方法将用于释放SDK占用的系统资源
     }
 
     @Override
@@ -394,17 +383,14 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
                 .setTitle(getResources()
                         .getString(R.string.set_ring_dialog_title))
                 .setIcon(R.drawable.info)
-                .setSingleChoiceItems(R.array.set_ring_dialog_msg, 0,
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-                                // TODO Auto-generated method stub
-                                dialog.dismiss();
-                                setVoice(which);
-                            }
-                        }).show();
+                .setSingleChoiceItems(R.array.set_ring_dialog_msg, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                        dialog.dismiss();
+                        setVoice(which);
+                    }
+                }).show();
     }
 
     /**
@@ -412,7 +398,7 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
      */
     private String getPath() {
         String path = null;
-        String title = MusicActivity.mTextView_music_name.getText().toString();
+        String title = mTextView_music_name.getText().toString();
         // 根据
         Cursor cursor = this.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -434,9 +420,6 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
         ContentValues cv = new ContentValues();
         Uri newUri = null;
         Uri uri = MediaStore.Audio.Media.getContentUriForPath(path);
-
-        if (Constant.D)
-            Log.e(TAG, "---setRing---" + uri.toString());
         // 查询音乐文件在媒体库是否存在
         Cursor cursor = this.getContentResolver().query(uri, null,
                 MediaStore.MediaColumns.DATA + "=?", new String[]{path},
@@ -456,7 +439,6 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
                     cv.put(MediaStore.Audio.Media.IS_ALARM, false);
                     cv.put(MediaStore.Audio.Media.IS_MUSIC, false);
                     break;
-
                 case Constant.ALARM:
                     cv.put(MediaStore.Audio.Media.IS_RINGTONE, false);
                     cv.put(MediaStore.Audio.Media.IS_NOTIFICATION, false);
@@ -474,33 +456,26 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
             }
 
             // 把需要设为铃声的歌曲更新铃声库
-            getContentResolver().update(uri, cv,
-                    MediaStore.MediaColumns.DATA + "=?", new String[]{path});
+            getContentResolver().update(uri, cv, MediaStore.MediaColumns.DATA + "=?", new String[]{path});
             newUri = ContentUris.withAppendedId(uri, Long.valueOf(_id));
             // 下一步为关键代码：
-            String title = MusicActivity.mTextView_music_name.getText()
-                    .toString();
+            String title = mTextView_music_name.getText().toString();
             switch (id) {
                 case Constant.RINGTONE:
                     RingtoneManager.setActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE, newUri);
                     Toast.makeText(MusicActivity.this, "已经将   " + title + " 设置为手机铃声", Toast.LENGTH_SHORT).show();
                     break;
                 case Constant.NOTIFICATION:
-                    RingtoneManager.setActualDefaultRingtoneUri(this,
-                            RingtoneManager.TYPE_NOTIFICATION, newUri);
+                    RingtoneManager.setActualDefaultRingtoneUri(this, RingtoneManager.TYPE_NOTIFICATION, newUri);
                     Toast.makeText(MusicActivity.this, "已经将   " + title + " 设置为手机通知铃声", Toast.LENGTH_SHORT).show();
                     break;
                 case Constant.ALARM:
-                    RingtoneManager.setActualDefaultRingtoneUri(this,
-                            RingtoneManager.TYPE_ALARM, newUri);
-                    Toast.makeText(MusicActivity.this,
-                            "已经将   " + title + " 设置为手机闹铃铃声", Toast.LENGTH_SHORT)
-                            .show();
+                    RingtoneManager.setActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM, newUri);
+                    Toast.makeText(MusicActivity.this, "已经将   " + title + " 设置为手机闹铃铃声", Toast.LENGTH_SHORT).show();
                     break;
                 case Constant.ALL:
                     RingtoneManager.setActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALL, newUri);
-                    Toast.makeText(MusicActivity.this, "已经将   " + title + " 设置为手机所有所有", Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(MusicActivity.this, "已经将   " + title + " 设置为手机所有所有", Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;
@@ -516,7 +491,7 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-		/* 手机晃动，当前时间 */
+        /* 手机晃动，当前时间 */
         long current_time = java.lang.System.currentTimeMillis();
         long diffTime = (current_time - last_time);
         /* 如果持续的时间超过100毫秒，就计算晃动幅度 */
@@ -525,13 +500,10 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
             x = event.values[SensorManager.DATA_X];
             y = event.values[SensorManager.DATA_Y];
             z = event.values[SensorManager.DATA_Z];
-            float speed = 10000
-                    * Math.abs(x + y + z - last_x - last_y - last_z) / diffTime;
+            float speed = 10000 * Math.abs(x + y + z - last_x - last_y - last_z) / diffTime;
             // Log.e(TAG, "speed=" + speed);
             /* 检测到摇晃后执行 */
             if (speed > HOLD_SPEED) {
-                if (Constant.D)
-                    Log.e(TAG, "》》》》》》》》》》》》》next了》》》》》》》》》》》》》》》");
                 // 进行换歌操作
                 data[0] = Constant.CMD_NEXT;
                 data[1] = 0;
@@ -546,5 +518,28 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
         last_x = x;
         last_y = y;
         last_z = z;
+    }
+
+    @Override
+    public void notifyMusic(MessageEvent event) {
+        if (event.getMessage().equals("hide_lrc")) {
+            mTextView_show_lrc.SetIndex(-1);
+            mTextView_show_lrc.invalidate();
+        } else if ("load_song_order_by_order".equals(event.getMessage())) {
+            mImageView_music_play.setImageResource(R.drawable.ic_media_play);
+        } else if ("scroll_lrc".equals(event.getMessage())) {
+            // 播放界面的显示歌词
+            mTextView_show_lrc.SetIndex((Integer) event.getData());
+            mTextView_show_lrc.invalidate();
+        } else if ("stop_play".equals(event.getMessage())) {
+            mTextView_show_lrc.setText("");
+        } else if ("update_ui".equals(event.getMessage())) {
+            int[] pos = (int[]) event.getData();
+            int position = pos[0] * mSeekBar.getMax() / pos[1];
+            mSeekBar.setProgress(position);
+            mTextView_music_start_time.setText(MusicUtil.formatTime(pos[0]));
+        } else if ("seekbar_change".equals(event.getMessage())) {
+            mSeekBar.setProgress((Integer) event.getData());
+        }
     }
 }

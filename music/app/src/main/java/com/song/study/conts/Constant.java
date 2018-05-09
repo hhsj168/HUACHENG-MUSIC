@@ -3,7 +3,7 @@ package com.song.study.conts;
 /**
  * 用到的常量
  *
- * @author 顾修忠
+ * @author Kevin Song
  */
 public interface Constant {
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="etInputMoney"/>
+    <item type="id" name="spinnerPayType"/>
+    <item type="id" name="spinnerText"/>
+     <item type="id" name="submitPay"/>
+     <item type="id" name="etInputOrder"/>
+     <item type="id" name="order_query"/>
+     <item type="id" name="order_list"/>
+</resources>

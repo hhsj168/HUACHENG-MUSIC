@@ -1,5 +1,6 @@
 package com.song.study.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import java.util.List;
 /**
  * MyFloatView.java该类继承TextView，显示桌面歌词，处理移动事件
  ***/
+@SuppressLint("AppCompatCustomView")
 public class MyFloatView extends TextView {
 
     public static ColorFont colorFont;
@@ -33,7 +35,7 @@ public class MyFloatView extends TextView {
     private int Index = 0;
     private float width;
     private float high;
-    private Paint CurrentPaint;
+    private Paint mCurrentPaint;
     // 保存每句歌词和时间的集合
     private List<LrcContent> mSentenceEntities = new ArrayList<LrcContent>();
     // 控制渲染速度
@@ -44,11 +46,8 @@ public class MyFloatView extends TextView {
 
     public MyFloatView(Context context) {
         super(context);
-        wm = (WindowManager) getContext().getApplicationContext()
-                .getSystemService(Context.WINDOW_SERVICE);
-        wmParams = ((MyApplication) getContext().getApplicationContext())
-                .getMywmParams();
-
+        wm = (WindowManager) getContext().getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        wmParams = ((MyApplication) getContext().getApplicationContext()).getMywmParams();
         this.setText("");
         this.setTextColor(Color.RED);
         this.setTextSize(30.0f);
@@ -58,14 +57,13 @@ public class MyFloatView extends TextView {
 
         // *******************高亮部分********************
         // 初始化画笔
-        CurrentPaint = new Paint();
+        mCurrentPaint = new Paint();
         // 设置画笔抗锯齿,就会圆滑些了
-        CurrentPaint.setAntiAlias(true);
+        mCurrentPaint.setAntiAlias(true);
         // 设置画笔的透明度
-        CurrentPaint.setAlpha(255);
+        mCurrentPaint.setAlpha(255);
         // 设置画笔的对齐方式
-        CurrentPaint.setTextAlign(Paint.Align.CENTER);
-
+        mCurrentPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     public void setSentenceEntities(List<LrcContent> mSentenceEntities) {
@@ -120,10 +118,10 @@ public class MyFloatView extends TextView {
         }
 
         // 设置歌词高亮色的颜色,透明度,大小
-        CurrentPaint.setColor(colorFont.getColor_current());
-        CurrentPaint.setTextSize(colorFont.getFont_current_size());
-        CurrentPaint.setAlpha(colorFont.getFont_current_alpha());
-        CurrentPaint.setTypeface(Typeface.SERIF);
+        mCurrentPaint.setColor(colorFont.getColor_current());
+        mCurrentPaint.setTextSize(colorFont.getFont_current_size());
+        mCurrentPaint.setAlpha(colorFont.getFont_current_alpha());
+        mCurrentPaint.setTypeface(Typeface.SERIF);
 
         try {
             setText("");
@@ -142,9 +140,9 @@ public class MyFloatView extends TextView {
             LinearGradient shader = new LinearGradient(20, 0, len, 0,
                     new int[]{Color.YELLOW, Color.RED}, new float[]{speed1,
                     speed2}, TileMode.CLAMP);
-            CurrentPaint.setShader(shader);
+            mCurrentPaint.setShader(shader);
             // 画出当前的歌词
-            canvas.drawText(s, width / 2, high / 2, CurrentPaint);
+            canvas.drawText(s, width / 2, high / 2, mCurrentPaint);
         } catch (Exception e) {
             setText("");
         }

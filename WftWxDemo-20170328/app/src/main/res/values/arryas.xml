@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="payTypes">
+		<item>微信扫码支付</item>
+		<item>手Q扫码支付</item>
+		<item>支付宝扫码支付</item>
+		<item>微信app支付</item>
+		<item>支付宝app支付</item>
+	</string-array>
+</resources>

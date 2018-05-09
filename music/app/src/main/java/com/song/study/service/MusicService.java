@@ -18,6 +18,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -25,12 +27,11 @@ import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+import com.song.study.MessageEvent;
 import com.song.study.MyApplication;
 import com.song.study.R;
 import com.song.study.activity.AboutAuthor;
-import com.song.study.main.MainActivity;
-import com.song.study.main.MainTestActivity;
-import com.song.study.activity.MusicActivity;
+import com.song.study.conts.IntentKeywords;
 import com.song.study.musicobject.Music;
 import com.song.study.conts.Constant;
 import com.song.study.musicutil.LrcProcess;
@@ -40,6 +41,9 @@ import com.song.study.musicutil.MusicUtil;
 import com.song.study.view.MyFloatView;
 import com.song.study.receiver.InOutCallReceiver;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -54,7 +58,7 @@ public class MusicService extends Service {
     // 自定义广播接收器的ACTION
     public static final String ACTION = "MUSIC";
     private static final String TAG = "MusicService";
-    private static final int WHAT = 0X1;
+    private static final int UPDATE_UI = 0X1;
     public static List<Music> recentMusics = new ArrayList<Music>();
     private static MediaPlayer mediaPlayer;
     // 处理歌词的类
@@ -87,57 +91,27 @@ public class MusicService extends Service {
     /**
      * 处理线程发过来的信息
      */
-    private Handler mHandler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case WHAT:// 将当前播放歌曲时间除以总时间得到百分比
-                    int pos = mediaPlayer.getCurrentPosition()
-                            * MusicActivity.mSeekBar.getMax()
-                            / mediaPlayer.getDuration();
-                    MusicActivity.mSeekBar.setProgress(pos);
-                    MusicActivity.mTextView_music_start_time.setText(MusicUtil
-                            .formatTime(mediaPlayer.getCurrentPosition()));
-                    break;
-                default:
-                    break;
-            }
+    private final Handler mHandler = new MyHandler(this);
+
+    private MessageEvent updateUiEvent;
+
+    private void updateUi(Message msg) {
+        if (updateUiEvent == null){
+            updateUiEvent = new MessageEvent("update_ui");
 
         }
+        int[] positions = new int[2];
+        positions[0] = mediaPlayer.getCurrentPosition();
+        positions[1] =  mediaPlayer.getDuration();
+        updateUiEvent.setData(positions);
+        notifyMusic(updateUiEvent);
 
-        ;
-    };
-    // 歌词滚动线程
-    Runnable mRunnable = new Runnable() {
+//        int pos = mediaPlayer.getCurrentPosition() * MusicActivity.mSeekBar.getMax() / mediaPlayer.getDuration();
+//        MusicActivity.mSeekBar.setProgress(pos);
+//        MusicActivity.mTextView_music_start_time.setText(MusicUtil.formatTime(mediaPlayer.getCurrentPosition()));
+    }
 
-        @Override
-        public void run() {
-            // 播放界面的显示歌词
-            MusicActivity.mTextView_show_lrc.SetIndex(LrcIndex());
-            MusicActivity.mTextView_show_lrc.invalidate();
-            // 桌面歌词
-            if (isShowDestTop) {
-                vFloatView.SetIndex(LrcIndex());
-                vFloatView.invalidate();
-            }
-            mHandler.postDelayed(mRunnable, 1000);
-        }
-    };
-    // 音乐播放完成监听事件
-    OnCompletionListener oncompleteion_listener = new OnCompletionListener() {
 
-        @Override
-        public void onCompletion(MediaPlayer palPlayer) {
-            // 停止播放进度线程
-            if (thread != null) {
-                thread.stopThread();
-            }
-            mHandler.removeCallbacks(mRunnable);
-            MusicActivity.mTextView_show_lrc.setText("");
-            vFloatView.setText("");
-            next();
-        }
-
-    };
 
     /**
      * 添加到最近播放列表中
@@ -145,40 +119,14 @@ public class MusicService extends Service {
     public static void addRecentList(Music m) {
         if (!recentMusics.contains(m)) {
             recentMusics.add(m);
-            if (Constant.D)
-                Log.e("-----", "NOT EXIT!");
         } else {
-            if (Constant.D)
-                Log.e("-----", " EXIT!");
+
         }
     }
 
-    // SeekBar的监听器
-    public static OnSeekBarChangeListener seekBarChangeListenerFactory() {
-        return new OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
-                MusicActivity.mSeekBar.setProgress(arg1);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar arg0) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar arg0) {
-                mediaPlayer.seekTo(arg0.getProgress() * mediaPlayer.getDuration() / arg0.getMax());
-            }
-        };
-    }
 
     @Override
     public void onCreate() {
-        if (Constant.D) {
-            Log.e(TAG, "onCreate()");
-        }
         // 默认加载所有的歌曲
         musics = MusicUtil.getAllMusics(getApplicationContext());
         // 定制广播接收器
@@ -186,7 +134,7 @@ public class MusicService extends Service {
         // 注册广播接收器
         this.registerReceiver(receiver, new IntentFilter(ACTION));
         IntentFilter filter = new IntentFilter();
-        filter.addAction("android.intent.action.NEW_OUTGOING_CALL");
+        filter.addAction(Intent.ACTION_NEW_OUTGOING_CALL);
         filter.addAction("android.intent.action.PHONE_STATE");
         // 注册来去电广播，(没有用常驻型的注册方式)
         this.registerReceiver(receiver_inoutcall, filter);
@@ -207,6 +155,7 @@ public class MusicService extends Service {
         super.onCreate();
 
     }
+
 
     /**
      * 显示设置Notification
@@ -231,32 +180,47 @@ public class MusicService extends Service {
 
     }
 
-    @Override
-    public void onStart(Intent intent, int startId) {
-        // TODO Auto-generated method stub
-        super.onStart(intent, startId);
-        if (Constant.D)
-            Log.e(TAG, "onStart()");
-    }
-
     /**
      * 判断是否显示歌词
      */
     private boolean isShowLrc() {
-        SharedPreferences preferences = getSharedPreferences("setting",
-                Activity.MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("setting", Activity.MODE_PRIVATE);
         return preferences.getBoolean("LRC_IS_SHOW", true);
     }
 
+    private static MessageEvent seekbarChangeEvent;
+    // SeekBar的监听器
+    public static OnSeekBarChangeListener seekBarChangeListenerFactory() {
+        return new OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
+                if (seekbarChangeEvent == null){
+                    seekbarChangeEvent = new MessageEvent("seekbar_change");
+                }
+                seekbarChangeEvent.setData(arg1);
+                MusicService.notifyMusic(seekbarChangeEvent);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar arg0) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar arg0) {
+                mediaPlayer.seekTo(arg0.getProgress() * mediaPlayer.getDuration() / arg0.getMax());
+            }
+        };
+    }
+
     private BroadcastReceiver receiverFactory() {
+
         return new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
-                // TODO Auto-generated method stub
-                if (Constant.D)
-                    Log.e(TAG, "onReceive()");
-                int[] data = intent.getExtras().getIntArray(MusicActivity.KEY);
+                int[] data = intent.getExtras().getIntArray(IntentKeywords.KEY);
                 current_index = intent.getIntExtra("index", current_index);
                 if (Constant.D)
                     Log.e(TAG, "current_index=" + current_index);
@@ -305,8 +269,7 @@ public class MusicService extends Service {
                         String albumname = intent.getStringExtra("albumname");
                         if (Constant.D)
                             Log.e(TAG, "==albumname=" + albumname);
-                        musics = MusicUtil.getMusicInOneAlum(
-                                getApplicationContext(), albumname);
+                        musics = MusicUtil.getMusicInOneAlum(getApplicationContext(), albumname);
                         break;
                 /* 当播放的是默认专辑中歌曲时 */
                     case Constant.CMD_PLAY_ALBUM_Default:
@@ -325,8 +288,7 @@ public class MusicService extends Service {
                         if (!recentMusics.isEmpty()) {
                             musics = recentMusics;
                         } else {
-                            musics = MusicUtil
-                                    .getAllMusics(getApplicationContext());
+                            musics = MusicUtil.getAllMusics(getApplicationContext());
                         }
 
                         if (Constant.D)
@@ -338,8 +300,12 @@ public class MusicService extends Service {
                         break;
                     // 不显示歌词
                     case Constant.CMD_NOT_SHOW_LRC:
-                        MusicActivity.mTextView_show_lrc.SetIndex(-1);
-                        MusicActivity.mTextView_show_lrc.invalidate();
+
+                        MessageEvent event = new MessageEvent("hide_lrc");
+                        notifyMusic(event);
+
+//                        MusicActivity.mTextView_show_lrc.SetIndex(-1);
+//                        MusicActivity.mTextView_show_lrc.invalidate();
                         // 移除歌词线程mRunnable
                         mHandler.removeCallbacks(mRunnable);
                         break;
@@ -364,25 +330,25 @@ public class MusicService extends Service {
      * 播放歌曲
      */
     private void play() {
-        if (Constant.D)
-            Log.e(TAG, "play()");
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
             // 清除所有的Notification
             mNotificationManager.cancelAll();
-            MusicActivity.mImageView_music_play
-                    .setImageResource(R.drawable.ic_media_play);
             //悬浮窗不可见
             vFloatView.setVisibility(View.GONE);
+            MessageEvent event = new MessageEvent("pause_song");
+            event.setData(current_index);
+            EventBus.getDefault().post(event);
         } else {
             mediaPlayer.start();
             showNotification("正在播放", "正在播放歌曲", musics.get(current_index)
                             .getTitle(), R.mipmap.ic_launcher, R.mipmap.ic_launcher,
                     Notification.DEFAULT_VIBRATE);
-            MusicActivity.mImageView_music_play
-                    .setImageResource(R.drawable.ic_media_pause);
             //悬浮窗可见
             vFloatView.setVisibility(View.VISIBLE);
+            MessageEvent event = new MessageEvent("play_song");
+            event.setData(current_index);
+            EventBus.getDefault().post(event);
         }
     }
 
@@ -396,8 +362,6 @@ public class MusicService extends Service {
                 musics.get(current_index).getTitle(), R.mipmap.ic_launcher,
                 R.mipmap.ic_launcher, Notification.DEFAULT_VIBRATE);
         try {
-            if (Constant.D)
-                Log.e(TAG, "--loadSong()---musics-size()=" + musics.size());
             mediaPlayer.setDataSource(musics.get(current_index).getUrl());
             mediaPlayer.prepare();
             mediaPlayer.start();
@@ -412,15 +376,10 @@ public class MusicService extends Service {
             if (isShowLrc()) {
                 playLRC(current_index);
             }
-            // 更新界面组件
-            MusicActivity.mImageView_music_play
-                    .setImageResource(R.drawable.ic_media_pause);
-            MusicActivity.mTextView_music_name.setText(musics
-                    .get(current_index).getTitle());
-            MusicActivity.mTextView_music_singer.setText(musics.get(
-                    current_index).getSinger());
-            MusicActivity.mTextView_music_end_time.setText(MusicUtil
-                    .formatTime(musics.get(current_index).getTime()));
+            MessageEvent event = new MessageEvent("load_song");
+            event.setData(current_index);
+            EventBus.getDefault().post(event);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -465,12 +424,13 @@ public class MusicService extends Service {
         // 传回处理后的歌词文件
         lrcList = mLrcProcess.getLrcContent();
         if (!lrcList.isEmpty()) {
-            MusicActivity.mTextView_show_lrc.setSentenceEntities(lrcList);
+            MessageEvent event = new MessageEvent("play_lrc");
+            event.setData(lrcList);
+            notifyMusic(event);
+//            MusicActivity.mTextView_show_lrc.setSentenceEntities(lrcList);
             this.vFloatView.setSentenceEntities(lrcList);
             // 启动线程
             mHandler.post(mRunnable);
-            if (Constant.D)
-                Log.e("-----", "--playLRC--not null");
         }
     }
 
@@ -479,13 +439,10 @@ public class MusicService extends Service {
      */
     private void createView() {
         vFloatView = new MyFloatView(getApplicationContext());
-
         // 获取WindowManager
         wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-        WindowManager.LayoutParams wmParams = null;
-
         // 设置LayoutParams(全局变量）相关参数
-        wmParams = ((MyApplication) getApplication()).getMywmParams();
+        WindowManager.LayoutParams wmParams = ((MyApplication) getApplication()).getMywmParams();
         wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
         // 系统提示类型,重要
         wmParams.format = 1;
@@ -503,14 +460,24 @@ public class MusicService extends Service {
         wmParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         wmParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         // 显示myFloatView
-        wm.addView(vFloatView, wmParams);
+
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } else {
+                wm.addView(vFloatView, wmParams);
+            }
+        }
+
     }
 
     /**
      * 根据当前的播放模式 播放下一首
      */
     private void next() {
-
         switch (getCurrent_index_playMode()) {
             case Constant.CMD_RANDOM:
                 randomplay();
@@ -576,10 +543,10 @@ public class MusicService extends Service {
             if (isShowLrc()) {
                 playLRC(current_index);
             }
-            MusicActivity.mImageView_music_play
-                    .setImageResource(R.drawable.ic_media_play);
+            MessageEvent event = new MessageEvent("load_song_order_by_order");
+            notifyMusic(event);
+//            MusicActivity.mImageView_music_play.setImageResource(R.drawable.ic_media_play);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -591,22 +558,10 @@ public class MusicService extends Service {
         current_index = new Random().nextInt(musics.size());
     }
 
-    @Override
-    public IBinder onBind(Intent arg0) {
-        // TODO Auto-generated method stub
-        if (Constant.D)
-            Log.e(TAG, "onBind()");
-        return null;
-    }
-
-    ;
 
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
         super.onDestroy();
-        if (Constant.D)
-            Log.e(TAG, "onDestroy()");
         // 解除广播接收器
         unregisterReceiver(receiver);
         unregisterReceiver(receiver_inoutcall);
@@ -621,6 +576,12 @@ public class MusicService extends Service {
         mNotificationManager.cancelAll();
         // 删除组件销毁悬浮窗口
         wm.removeView(vFloatView);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     /**
@@ -643,6 +604,52 @@ public class MusicService extends Service {
         return current_index;
     }
 
+
+    // 歌词滚动线程
+    Runnable mRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+
+            MessageEvent event = new MessageEvent("scroll_lrc");
+            event.setData(LrcIndex());
+            notifyMusic(event);
+
+//            // 播放界面的显示歌词
+//            MusicActivity.mTextView_show_lrc.SetIndex(LrcIndex());
+//            MusicActivity.mTextView_show_lrc.invalidate();
+
+
+            // 桌面歌词
+            if (isShowDestTop) {
+                vFloatView.SetIndex(LrcIndex());
+                vFloatView.invalidate();
+            }
+            mHandler.postDelayed(mRunnable, 1000);
+        }
+    };
+    // 音乐播放完成监听事件
+    OnCompletionListener oncompleteion_listener = new OnCompletionListener() {
+
+        @Override
+        public void onCompletion(MediaPlayer palPlayer) {
+            // 停止播放进度线程
+            if (thread != null) {
+                thread.stopThread();
+            }
+            mHandler.removeCallbacks(mRunnable);
+
+
+            notifyMusic(new MessageEvent("stop_play"));
+
+//            MusicActivity.mTextView_show_lrc.setText("");
+            vFloatView.setText("");
+            next();
+        }
+
+    };
+
+
     // 线程内部类，用异步线程 Handler更新 主线程(UI线程)
     private class MyThread extends Thread {
         // 线程关闭的条件
@@ -650,7 +657,6 @@ public class MusicService extends Service {
 
         @Override
         public void run() {
-            // TODO Auto-generated method stub
             super.run();
             while (!isStop) {
                 try {
@@ -658,7 +664,7 @@ public class MusicService extends Service {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Message msg = mHandler.obtainMessage(WHAT);
+                Message msg = mHandler.obtainMessage(UPDATE_UI);
                 mHandler.sendMessage(msg);
             }
         }
@@ -668,5 +674,46 @@ public class MusicService extends Service {
             isStop = true;
         }
     }
+
+
+    private static class MyHandler extends Handler {
+
+        private WeakReference<MusicService> service;
+
+        public MyHandler(MusicService service) {
+            this.service = new WeakReference<MusicService>(service);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            if (service.get() != null) {
+                service.get().updateUi(msg);
+            }
+        }
+    }
+
+    static List<Notificationer> mNotificationList;
+
+    public interface Notificationer {
+        void notifyMusic(MessageEvent event);
+    }
+
+    public static void notifyMusic(MessageEvent event) {
+        if (mNotificationList != null && mNotificationList.size() > 0) {
+            for (Notificationer notificationer : mNotificationList) {
+                notificationer.notifyMusic(event);
+            }
+        }
+    }
+
+    public static void addListener(Notificationer notificationer) {
+        if (mNotificationList == null) {
+            mNotificationList = new ArrayList<>();
+        }
+        if (!mNotificationList.contains(notificationer)) {
+            mNotificationList.add(notificationer);
+        }
+    }
+
 
 }

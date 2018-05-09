@@ -107,7 +107,6 @@ public class ListActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO Auto-generated method stub
         return true;
     }
 
@@ -122,7 +121,6 @@ public class ListActivity extends BaseActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // TODO Auto-generated method stub
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             long secondTime = System.currentTimeMillis();
             // 当连续按返回键两次的时间不超过800毫秒就退出

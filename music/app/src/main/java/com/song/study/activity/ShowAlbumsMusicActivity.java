@@ -71,7 +71,6 @@ public class ShowAlbumsMusicActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO Auto-generated method stub
         return true;
     }
 }
