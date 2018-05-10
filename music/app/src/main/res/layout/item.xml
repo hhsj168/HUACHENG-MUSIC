@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:padding="2dp"
             android:text="@string/dailog_ok"
-            android:textColor="@color/whilte"
+            android:textColor="@color/white"
             android:textSize="20sp"/>
 
         <TextView
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:padding="2dp"
             android:text="@string/dailog_ok"
-            android:textColor="@color/whilte"
+            android:textColor="@color/white"
             android:textSize="15sp"/>
     </LinearLayout>
 
@@ -48,6 +48,6 @@
         android:layout_gravity="center"
         android:paddingRight="10dp"
         android:text="@string/dailog_ok"
-        android:textColor="@color/whilte"/>
+        android:textColor="@color/white"/>
 
 </RelativeLayout>

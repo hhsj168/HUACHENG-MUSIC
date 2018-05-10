@@ -87,12 +87,9 @@ public class MainTestActivity extends TabActivity {
             @Override
             public void onTabChanged(String tabId) {
                 currentView = mTabHost.getCurrentTab();
-                if (Constant.D)
-                    Log.e("-------", "///currentView=///" + currentView);
             }
         });
-        mTabHost.setAnimation(AnimationUtils
-                .loadAnimation(this, R.anim.alpha_z));
+        mTabHost.setAnimation(AnimationUtils.loadAnimation(this, R.anim.alpha_z));
     }
 
     private void showNotSupportDialog(int verson) {
@@ -157,18 +154,12 @@ public class MainTestActivity extends TabActivity {
                     currentView = (currentView == maxTabIndex
                             ? 0
                             : ++currentView);
-                    if (Constant.D)
-                        Log.e("-------right-------", "currentView="
-                                + currentView);
                     mTabHost.setCurrentTab(currentView);
                 } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
                         && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                     currentView = (currentView == 0
                             ? maxTabIndex
                             : --currentView);
-                    if (Constant.D)
-                        Log.e("-------left-------", "currentView="
-                                + currentView);
                     mTabHost.setCurrentTab(currentView);
                 }
             } catch (Exception e) {

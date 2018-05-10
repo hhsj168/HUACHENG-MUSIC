@@ -1,7 +1,5 @@
 package com.song.study.musicobject;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import java.io.Serializable;
 

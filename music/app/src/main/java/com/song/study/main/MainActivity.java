@@ -11,26 +11,37 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.song.study.MessageEvent;
 import com.song.study.R;
+import com.song.study.activity.MusicActivity;
 import com.song.study.base.BaseActivity;
 import com.song.study.main.fragment.AlbumsListFragment;
 import com.song.study.main.fragment.ArtistsListFrament;
 import com.song.study.main.fragment.MusicListFrament;
 import com.song.study.main.fragment.RecentPlaylListFragment;
 import com.song.study.musicutil.AnimCommon;
+import com.song.study.musicutil.MusicUtil;
 import com.song.study.service.MusicService;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements MusicService.Notificationer, View.OnClickListener {
 
     // *********************************
     private static final int SWIPE_MIN_DISTANCE = 120;
@@ -48,6 +59,16 @@ public class MainActivity extends BaseActivity {
 
     String[] tabTitles = {"全部", "艺术家", "最近", "发现"};
 
+
+    private View songLayout;
+    private TextView songNameTV;
+    private TextView songAthorTV;
+    private ImageView songPhoto;
+    private ImageView playPause;
+    private ImageView nextSong;
+    private ContentLoadingProgressBar progressBar;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +77,24 @@ public class MainActivity extends BaseActivity {
         }
         setContentView(R.layout.activity_main);//
 
+        songLayout = findViewById(R.id.song_layout);
+        songNameTV = (TextView) findViewById(R.id.current_song_name);
+        songAthorTV = (TextView) findViewById(R.id.current_song_athor);
+        songPhoto = (ImageView) findViewById(R.id.current_song_photo);
+        playPause = (ImageView) findViewById(R.id.cmd_play_pause);
+        nextSong = (ImageView) findViewById(R.id.cmd_next);
+        progressBar = (ContentLoadingProgressBar) findViewById(R.id.song_progressbar);
+
+
+        songLayout.setOnClickListener(this);
+        playPause.setOnClickListener(this);
+        nextSong.setOnClickListener(this);
+
         tabLayout = (TabLayout) findViewById(R.id.tablayout);
+
         initTabs();
+
+        EventBus.getDefault().register(this);
     }
 
     private void initTabs() {
@@ -93,6 +130,65 @@ public class MainActivity extends BaseActivity {
         viewPager.setCurrentItem(0);
 
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        if (event.getMessage().equals("load_song")) {
+            int current_index = (int) event.getData();
+            playPause.setImageResource(R.drawable.ic_media_pause);
+            songNameTV.setText(MusicService.getInstance().getCurrentMusic().getTitle());
+            songAthorTV.setText(MusicService.getInstance().getCurrentMusic().getSinger());
+        } else if (event.getMessage().equals("play_song")) {
+            playPause.setImageResource(R.drawable.ic_media_pause);
+            songNameTV.setText(MusicService.getInstance().getCurrentMusic().getTitle());
+            songAthorTV.setText(MusicService.getInstance().getCurrentMusic().getSinger());
+        } else if (event.getMessage().equals("pause_song")) {
+            playPause.setImageResource(R.drawable.ic_media_play);
+        }
+        // 更新界面组件
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MusicService.addListener(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        MusicService.removeListener(this);
+        super.onDestroy();
+    }
+
+    @Override
+    public void notifyMusic(MessageEvent event) {
+        if ("stop_play".equals(event.getMessage())) {
+            playPause.setImageResource(R.drawable.ic_media_play);
+        } else if ("update_ui".equals(event.getMessage())) {
+            int[] pos = (int[]) event.getData();
+            int position = pos[0] * progressBar.getMax() / pos[1];
+            progressBar.setProgress(position);
+        } else if ("seekbar_change".equals(event.getMessage())) {
+            progressBar.setProgress((Integer) event.getData());
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.song_layout) {
+            Intent intent = new Intent(this, MusicActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.cmd_play_pause) {
+            // TODO: 2018/5/10 暂停/播放
+        } else if (id == R.id.cmd_next) {
+            // TODO: 2018/5/10 下一曲
+            Intent intent = new Intent(this, MusicActivity.class);
+            startActivity(intent);
+        }
     }
 
     class MyFragmentPageAdapter extends FragmentPagerAdapter {

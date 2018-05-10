@@ -1,8 +1,6 @@
 package com.song.study.adpter;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.song.study.R;
-import com.song.study.activity.MusicActivity;
-import com.song.study.conts.Constant;
 import com.song.study.musicobject.Music;
 import com.song.study.service.MusicService;
 
@@ -93,11 +89,9 @@ public class MusicListAdapter extends BaseAdapter {
                 lastSelectedPosition = arg0;
                 listMusics.get(arg0).setSelected(1);
                 notifyDataSetChanged();
-                Intent intent = new Intent(context, MusicActivity.class);
-                intent.putExtra("index", arg0);
-                intent.putExtra("FLAG", Constant.FLAG_ALL);
-                context.startActivity(intent);
-                ((Activity) context).overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+                if (mListener != null) {
+                    mListener.onItemClick(arg0, listMusics.get(arg0));
+                }
 
             }
         });
@@ -110,5 +104,15 @@ public class MusicListAdapter extends BaseAdapter {
         TextView music_singer;
         ImageView selectedStatus;
         ImageView moreTextView;
+    }
+
+    private IMusicItemClickListener mListener;
+
+    public void setMusicItemClickListener(IMusicItemClickListener listener) {
+        this.mListener = listener;
+    }
+
+    public interface IMusicItemClickListener {
+        void onItemClick(int position, Music music);
     }
 }

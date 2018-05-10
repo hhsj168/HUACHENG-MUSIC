@@ -18,6 +18,7 @@ import android.widget.ListView;
 import com.song.study.R;
 import com.song.study.activity.MusicActivity;
 import com.song.study.adpter.MusicListAdapter;
+import com.song.study.conts.IntentKeywords;
 import com.song.study.musicobject.Music;
 import com.song.study.conts.Constant;
 import com.song.study.musicutil.MusicUtil;
@@ -109,6 +110,47 @@ public class MusicListFrament extends Fragment {
         if (msg.what == REQEST_CODE) {
             if (musicAdapter == null) {
                 musicAdapter = new MusicListAdapter(getActivity(), musics);
+                musicAdapter.setMusicItemClickListener(new MusicListAdapter.IMusicItemClickListener() {
+                    @Override
+                    public void onItemClick(final int position, Music music) {
+                        if (MusicService.getInstance() == null) {
+                            mContext.startService(new Intent(mContext, MusicService.class));
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent intent = new Intent(MusicService.ACTION);
+                                    Bundle bundle = new Bundle();
+                                    int[] data = new int[2];
+                                    data[0] = Constant.CMD_PLAY_SPEC;
+                                    data[1] = 0;
+                                    bundle.putIntArray(IntentKeywords.KEY, data);
+                                    bundle.putInt(IntentKeywords.INDEX, position);
+                                    // 将命令及数据打包到Intent里
+                                    intent.putExtras(bundle);
+                                    mContext.sendBroadcast(intent);
+                                }
+                            }, 300);
+                        } else {
+                            Intent intent = new Intent(MusicService.ACTION);
+                            Bundle bundle = new Bundle();
+                            int[] data = new int[2];
+                            data[0] = Constant.CMD_PLAY_SPEC;
+                            data[1] = 0;
+                            bundle.putIntArray(IntentKeywords.KEY, data);
+                            bundle.putInt(IntentKeywords.INDEX, position);
+                            // 将命令及数据打包到Intent里
+                            intent.putExtras(bundle);
+                            mContext.sendBroadcast(intent);
+                        }
+
+
+//                        Intent intent = new Intent(mContext, MusicActivity.class);
+//                        intent.putExtra("index", position);
+//                        intent.putExtra("FLAG", Constant.FLAG_ALL);
+//                        mContext.startActivity(intent);
+//                        ((Activity) mContext).overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+                    }
+                });
                 mListView.setAdapter(musicAdapter);
             }
             musicAdapter.notifyDataSetChanged();

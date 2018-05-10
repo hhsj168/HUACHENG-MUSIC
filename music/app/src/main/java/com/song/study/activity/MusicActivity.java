@@ -123,7 +123,7 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
         } else if (flag == Constant.FLAG_PART) {
             String albumname = getIntent().getStringExtra("albumname");
             musics.clear();
-            musics = MusicUtil.getMusicInOneAlum(getApplicationContext(), albumname);
+            musics.addAll(MusicUtil.getMusicInOneAlum(getApplicationContext(), albumname));
             data[0] = Constant.CMD_PLAY_ALBUM_SPEC;
             data[1] = 0;
             bundle.putIntArray(KEY, data);
@@ -134,7 +134,7 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
             this.sendBroadcast(intent);
         } else if (flag == Constant.FLAG_RECENT) {
             musics.clear();
-            musics = MusicService.recentMusics;
+            musics.addAll(MusicService.recentMusics);
             data[0] = Constant.CMD_PLAY_ALBUM_RENCENT;
             data[1] = 0;
             bundle.putIntArray(KEY, data);
@@ -334,6 +334,7 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
+        MusicService.removeListener(this);
         super.onDestroy();
         // 解除加速度传感器
         // mSensorManager.unregisterListener(this);
@@ -403,7 +404,8 @@ public class MusicActivity extends BaseActivity implements OnClickListener,
         Cursor cursor = this.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 new String[]{MediaStore.Audio.Media.DATA},
-                MediaStore.Audio.Media.TITLE + "=?", new String[]{title},
+                MediaStore.Audio.Media.TITLE + "=?",
+                new String[]{title},
                 MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
         if (cursor.moveToFirst()) {
             path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));

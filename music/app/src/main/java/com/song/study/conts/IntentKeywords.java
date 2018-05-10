@@ -6,4 +6,5 @@ package com.song.study.conts;
 
 public interface IntentKeywords {
     String KEY = "CMD";
+    String INDEX = "index";
 }

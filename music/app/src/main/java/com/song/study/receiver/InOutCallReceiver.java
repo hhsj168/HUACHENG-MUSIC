@@ -1,4 +1,4 @@
- package com.song.study.receiver;
+package com.song.study.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,10 +23,9 @@ public class InOutCallReceiver extends BroadcastReceiver {
     private TelephonyManager mTelephonyManager;
 
     @Override
-    public void onReceive(Context arg0, Intent arg1) {
+    public void onReceive(Context context, Intent intent) {
         // 获取电话服务，并监听电话的状态
-        mTelephonyManager = (TelephonyManager) arg0
-                .getSystemService(Context.TELEPHONY_SERVICE);
+        mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
         switch (mTelephonyManager.getCallState()) {
             // 通话中
@@ -41,9 +40,9 @@ public class InOutCallReceiver extends BroadcastReceiver {
                 data[1] = 0;
                 bundle.putIntArray(IntentKeywords.KEY, data);
                 // 将命令及数据打包到Intent里
-                intent.replaceExtras(bundle);
+                this.intent.replaceExtras(bundle);
                 // 发送广播
-                arg0.sendBroadcast(intent);
+                context.sendBroadcast(this.intent);
                 break;
             default:
                 break;

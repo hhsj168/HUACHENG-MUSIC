@@ -1,5 +1,6 @@
 package com.song.study.service;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Notification;
@@ -20,10 +21,12 @@ import android.os.IBinder;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.RemoteViews;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
@@ -31,7 +34,9 @@ import com.song.study.MessageEvent;
 import com.song.study.MyApplication;
 import com.song.study.R;
 import com.song.study.activity.AboutAuthor;
+import com.song.study.activity.MusicActivity;
 import com.song.study.conts.IntentKeywords;
+import com.song.study.main.MainActivity;
 import com.song.study.musicobject.Music;
 import com.song.study.conts.Constant;
 import com.song.study.musicutil.LrcProcess;
@@ -55,21 +60,30 @@ import java.util.Random;
  */
 public class MusicService extends Service {
 
-    // 自定义广播接收器的ACTION
-    public static final String ACTION = "MUSIC";
     private static final String TAG = "MusicService";
     private static final int UPDATE_UI = 0X1;
-    public static List<Music> recentMusics = new ArrayList<Music>();
     private static MediaPlayer mediaPlayer;
+    // 自定义广播接收器的ACTION
+    public static final String ACTION_PLAY = "ACTION_PLAY";//播放
+    public static final String ACTION_PAUSE = "ACTION_PAUSE";//暂停
+    public static final String ACTION_NEXT = "ACTION_NEXT";//下一曲
+    public static final String ACTION_PRE = "ACTION_PRE";//上一曲
+    public static final String ACTION_LIKE = "ACTION_LIKE";
+    public static final String ACTION = "MUSIC";
+
+
+    public static List<Music> recentMusics = new ArrayList<Music>();
     // 处理歌词的类
     public LrcProcess mLrcProcess;
     // 显示歌词的组件
     public LrcView mLrcView;
     private BroadcastReceiver receiver = null;
     private InOutCallReceiver receiver_inoutcall = null;
-    private List<Music> musics /* = MusicListFrament.musics */;
+    private List<Music> musics = new ArrayList<>();
     // 当前播放的下标
     private int current_index = -1;
+    private int last_index = -1;
+
     // 当前播放的下标
     private int current_index_playMode = Constant.CMD_ORDER_BY_ORDER;
     // 进度条线程
@@ -130,15 +144,25 @@ public class MusicService extends Service {
     }
 
 
+    public Music getCurrentMusic() {
+        return musics.get(current_index);
+    }
+
     @Override
     public void onCreate() {
         // 默认加载所有的歌曲
-        musics = MusicUtil.getAllMusics(getApplicationContext());
+        musics.clear();
+        musics.addAll(MusicUtil.getAllMusics(getApplicationContext()));
         // 定制广播接收器
         receiver = receiverFactory();
         // 注册广播接收器
         this.registerReceiver(receiver, new IntentFilter(ACTION));
         IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_PLAY);
+        filter.addAction(ACTION_PAUSE);
+        filter.addAction(ACTION_NEXT);
+        filter.addAction(ACTION_PAUSE);
+        filter.addAction(ACTION_LIKE);
         filter.addAction(Intent.ACTION_NEW_OUTGOING_CALL);
         filter.addAction("android.intent.action.PHONE_STATE");
         // 注册来去电广播，(没有用常驻型的注册方式)
@@ -177,12 +201,102 @@ public class MusicService extends Service {
                 .setContentTitle(contentTitle)
                 .setContentText(contentText)
                 .setContentIntent(contentIntent)
-                .setDefaults(defaults)
+                .setDefaults(defaults).setVibrate(new long[]{0L})
                 .setTicker(tickerText)
                 .build();
         notification.flags = Notification.FLAG_ONGOING_EVENT;
         mNotificationManager.notify(id, notification);
+    }
 
+    private RemoteViews remoteViews;
+
+    /**
+     * 设置通知
+     */
+    @SuppressLint("NewApi")
+    private void setNotification() {
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        remoteViews = new RemoteViews(getPackageName(), R.layout.layout_notification_view);
+        remoteViews.setImageViewResource(R.id.widget_prev, R.drawable.ic_play_pre);
+        remoteViews.setImageViewResource(R.id.widget_play, R.drawable.ic_play_arrow_white_24dp);
+        remoteViews.setImageViewResource(R.id.widget_next, R.drawable.ic_play_next);
+
+
+        // 点击跳转到主界面
+        Intent intent = new Intent(this, MusicActivity.class);
+        PendingIntent intent_go = PendingIntent.getActivity(this, 5, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.notice, intent_go);
+
+
+        // 4个参数context, requestCode, intent, flags
+        Intent intent2 = new Intent(this, MainActivity.class);
+        PendingIntent intent_close = PendingIntent.getActivity(this, 0, intent2, PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
+
+        // 设置上一曲
+        Intent prv = new Intent();
+        prv.setAction(ACTION);
+        int[] data = new int[2];
+        data[0] = Constant.PlayCommond.CMD_LAST;
+        data[1] = last_index;
+        prv.putExtra(IntentKeywords.KEY, data);
+        prv.putExtra(IntentKeywords.INDEX, last_index);
+        PendingIntent intent_prev = PendingIntent.getBroadcast(this, 1, prv, PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.widget_prev, intent_prev);
+
+        //播放和暂停
+        Intent playorpause = new Intent();
+        playorpause.setAction(ACTION);
+        playorpause.putExtra(IntentKeywords.INDEX, current_index);
+        int[] data2 = new int[2];
+        // 设置播放
+        if (mediaPlayer.isPlaying()) {
+            data2[0] = Constant.PlayCommond.CMD_PAUSE;
+            playorpause.putExtra(IntentKeywords.KEY, data2);
+            PendingIntent intent_play = PendingIntent.getBroadcast(this, 2, playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
+            remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
+        } else {
+            data2[0] = Constant.PlayCommond.CMD_PLAY;
+            playorpause.putExtra(IntentKeywords.KEY, data2);
+            PendingIntent intent_play = PendingIntent.getBroadcast(this, 6, playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
+            remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
+        }
+
+        // 下一曲
+        Intent next = new Intent();
+        prv.setAction(ACTION);
+        int[] data3 = new int[2];
+        data3[0] = Constant.PlayCommond.CMD_NEXT;
+        if (current_index < musics.size() - 1) {
+            prv.putExtra(IntentKeywords.INDEX, current_index + 1);
+        } else {
+            prv.putExtra(IntentKeywords.INDEX, current_index);
+        }
+        prv.putExtra(IntentKeywords.KEY, data3);
+        PendingIntent intent_next = PendingIntent.getBroadcast(this, 3, next, PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.widget_next, intent_next);
+
+        // 设置收藏
+        PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.widget_fav, intent_fav);
+
+        builder.setSmallIcon(R.mipmap.ic_launcher); // 设置顶部图标
+
+//        Notification.Builder builder = new Notification.Builder(this);
+        Notification notification = builder
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("")
+                .setContentText("")
+//                .setContentIntent(intent_go)
+                .setDefaults(Notification.DEFAULT_SOUND).setVibrate(new long[]{0L})
+                .setTicker("播放")
+                .build();
+        notification.flags = Notification.FLAG_ONGOING_EVENT;
+        notification.contentView = remoteViews; // 设置下拉图标
+        notification.bigContentView = remoteViews; // 防止显示不完全,需要添加apisupport
+        notification.icon = R.mipmap.ic_launcher;
+        mNotificationManager.notify(100, notification);
     }
 
     /**
@@ -227,9 +341,9 @@ public class MusicService extends Service {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int[] data = intent.getExtras().getIntArray(IntentKeywords.KEY);
+                last_index = current_index;
+
                 current_index = intent.getIntExtra("index", current_index);
-                if (Constant.D)
-                    Log.e(TAG, "current_index=" + current_index);
                 switch (data[0]) {
                     case Constant.CMD_PLAY_SPEC:
                         loadSong();
@@ -260,35 +374,23 @@ public class MusicService extends Service {
                         // 清空，重新加载
                         musics.clear();
                         musics = MusicUtil.getAllMusics(getApplicationContext());
-                        if (Constant.D)
-                            Log.e("onreceiver(", "musics.size//" + musics.size());
-                        if (Constant.D)
-                            Log.e("onreceiver(", "musics.size//" + current_index);
                         next();
                         break;
                 /* 当播放的是某个专辑中歌曲时 */
                     case Constant.CMD_PLAY_ALBUM_SPEC:
-                        if (Constant.D)
-                            Log.e(TAG, "---CMD_PLAY_SPEC_CHANGE_LIST--");
                         // 清空，重新加载
                         musics.clear();
                         String albumname = intent.getStringExtra("albumname");
-                        if (Constant.D)
-                            Log.e(TAG, "==albumname=" + albumname);
                         musics = MusicUtil.getMusicInOneAlum(getApplicationContext(), albumname);
                         break;
                 /* 当播放的是默认专辑中歌曲时 */
                     case Constant.CMD_PLAY_ALBUM_Default:
-                        if (Constant.D)
-                            Log.e(TAG, "---CMD_PLAY_ALBUM_Default--");
                         // 清空，重新加载
                         musics.clear();
                         musics = MusicUtil.getAllMusics(getApplicationContext());
                         break;
                     // 播放最近的播放过的歌曲
                     case Constant.CMD_PLAY_ALBUM_RENCENT:
-                        if (Constant.D)
-                            Log.e(TAG, "---CMD_PLAY_ALBUM_RENCENT--");
                         // 清空，重新加载
                         musics.clear();
                         if (!recentMusics.isEmpty()) {
@@ -296,9 +398,6 @@ public class MusicService extends Service {
                         } else {
                             musics = MusicUtil.getAllMusics(getApplicationContext());
                         }
-
-                        if (Constant.D)
-                            Log.e(TAG, "----recentMusics.size()==" + recentMusics.size());
                         break;
                     // 显示歌词
                     case Constant.CMD_SHOW_LRC:
@@ -332,6 +431,30 @@ public class MusicService extends Service {
         };
     }
 
+
+    /**
+     * 播放歌曲
+     */
+    private void stopMediaPlayer() {
+        mediaPlayer.stop();
+    }
+
+
+    /**
+     * 播放歌曲
+     */
+    private void pause() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            mNotificationManager.cancelAll();
+            //悬浮窗不可见
+            vFloatView.setVisibility(View.GONE);
+            MessageEvent event = new MessageEvent("pause_song");
+            event.setData(current_index);
+            EventBus.getDefault().post(event);
+        }
+    }
+
     /**
      * 播放歌曲
      */
@@ -347,14 +470,15 @@ public class MusicService extends Service {
             EventBus.getDefault().post(event);
         } else {
             mediaPlayer.start();
-            showNotification("正在播放", "正在播放歌曲", musics.get(current_index)
-                            .getTitle(), R.mipmap.ic_launcher, R.mipmap.ic_launcher,
-                    Notification.DEFAULT_VIBRATE);
-            //悬浮窗可见
-            vFloatView.setVisibility(View.VISIBLE);
-            MessageEvent event = new MessageEvent("play_song");
-            event.setData(current_index);
-            EventBus.getDefault().post(event);
+            setNotification();
+//            showNotification("正在播放", "正在播放歌曲", musics.get(current_index)
+//                            .getTitle(), R.mipmap.ic_launcher, R.mipmap.ic_launcher,
+//                    Notification.DEFAULT_SOUND);
+//            //悬浮窗可见
+//            vFloatView.setVisibility(View.VISIBLE);
+//            MessageEvent event = new MessageEvent("play_song");
+//            event.setData(current_index);
+//            EventBus.getDefault().post(event);
         }
     }
 
@@ -364,9 +488,10 @@ public class MusicService extends Service {
     private void loadSong() {
         mediaPlayer.reset();
         mNotificationManager.cancelAll();
-        showNotification("正在播放", "正在播放歌曲",
-                musics.get(current_index).getTitle(), R.mipmap.ic_launcher,
-                R.mipmap.ic_launcher, Notification.DEFAULT_VIBRATE);
+        setNotification();
+//        showNotification("正在播放", "正在播放歌曲",
+//                musics.get(current_index).getTitle(), R.mipmap.ic_launcher,
+//                R.mipmap.ic_launcher, Notification.DEFAULT_SOUND);
         try {
             mediaPlayer.setDataSource(musics.get(current_index).getUrl());
             mediaPlayer.prepare();
@@ -551,7 +676,6 @@ public class MusicService extends Service {
             }
             MessageEvent event = new MessageEvent("load_song_order_by_order");
             notifyMusic(event);
-//            MusicActivity.mImageView_music_play.setImageResource(R.drawable.ic_media_play);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -644,11 +768,7 @@ public class MusicService extends Service {
                 thread.stopThread();
             }
             mHandler.removeCallbacks(mRunnable);
-
-
             notifyMusic(new MessageEvent("stop_play"));
-
-//            MusicActivity.mTextView_show_lrc.setText("");
             vFloatView.setText("");
             next();
         }
@@ -694,6 +814,7 @@ public class MusicService extends Service {
         public void handleMessage(Message msg) {
             if (service.get() != null) {
                 service.get().updateUi(msg);
+                service.get().setNotification();
             }
         }
     }
@@ -721,5 +842,21 @@ public class MusicService extends Service {
         }
     }
 
+
+    public static void removeListener(Notificationer notificationer) {
+        if (mNotificationList == null) {
+            return;
+        }
+        if (mNotificationList.contains(notificationer)) {
+            mNotificationList.remove(notificationer);
+        }
+    }
+
+    public static void removeAllListener() {
+        if (mNotificationList == null) {
+            return;
+        }
+        mNotificationList.clear();
+    }
 
 }

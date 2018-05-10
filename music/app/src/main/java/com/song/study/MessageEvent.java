@@ -2,9 +2,16 @@ package com.song.study;
 
 public class MessageEvent {
 
+
+    private int tag;//commond action
+
     private String message;
 
     private Object object;
+
+    public MessageEvent(int tag) {
+        this.tag = tag;
+    }
 
     public MessageEvent(String message) {
         this.message = message;

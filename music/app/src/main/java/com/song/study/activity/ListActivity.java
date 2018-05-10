@@ -99,13 +99,6 @@ public class ListActivity extends BaseActivity {
     }
 
     @Override
-    protected void onRestart() {
-        if (Constant.D)
-            Log.e("--------------", "onRestart()");
-        super.onRestart();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }

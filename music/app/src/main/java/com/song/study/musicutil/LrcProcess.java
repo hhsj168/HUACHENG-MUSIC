@@ -41,8 +41,6 @@ public class LrcProcess {
         song_path = song_path.toLowerCase();
 
         File f = new File(song_path.replace(".mp3", ".lrc"));
-        if (Constant.D)
-            Log.e("-----------", "" + song_path.replace(".mp3", ".lrc"));
         try {
             FileInputStream fis = new FileInputStream(f);
             InputStreamReader isr = new InputStreamReader(fis, "GBK");

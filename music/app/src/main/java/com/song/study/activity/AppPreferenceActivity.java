@@ -78,19 +78,14 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
 
         // 获取SharedPreferences对象
         // Activity.MODE_PRIVATE(对其它用户不可访问)指定文件的建立模式
-        sharedPreferences = getSharedPreferences("setting",
-                Activity.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("setting", Activity.MODE_PRIVATE);
 
         // 设置setFontColorPreference和setFontColorPreference,setFontAlphaPreference是否可用
         if (sharedPreferences.getBoolean("LRC_IS_SHOW", true)) {
-            if (Constant.D)
-                Log.e(TAG, "----LRC_IS_SHOW ---true---");
             setFontColorPreference.setEnabled(true);
             setFontSizePreference.setEnabled(true);
             setFontAlphaPreference.setEnabled(true);
         } else {
-            if (Constant.D)
-                Log.e(TAG, "----LRC_IS_SHOW ---false---");
             setFontColorPreference.setEnabled(false);
             setFontSizePreference.setEnabled(false);
             setFontAlphaPreference.setEnabled(false);
@@ -100,12 +95,10 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
         size1 = sharedPreferences.getInt("LRCFontSizeCurrent", 25);
         size2 = sharedPreferences.getInt("LRCFontSizeNotCurrent", 20);
         setFontSizePreference.setSummary("高亮色:" + size1 + "/非高亮色:" + size2);
-        final String colors[] = getResources().getStringArray(
-                R.array.set_fontcolor_dialog_msg);
+        final String colors[] = getResources().getStringArray(R.array.set_fontcolor_dialog_msg);
         color_index1 = sharedPreferences.getInt("LRCFontColorCurrent", 0);
         color_index2 = sharedPreferences.getInt("LRCFontColorNotCurrent", 6);
-        setFontColorPreference.setSummary("高亮色:" + colors[color_index1]
-                + "/非高亮色:" + colors[color_index2]);
+        setFontColorPreference.setSummary("高亮色:" + colors[color_index1] + "/非高亮色:" + colors[color_index2]);
         alpha1 = sharedPreferences.getInt("LRCFontAlphaCurrent", 255);
         alpha2 = sharedPreferences.getInt("LRCFontAlphaNotCurrent", 100);
         setFontAlphaPreference.setSummary("高亮色:" + alpha1 + "/非高亮色:" + alpha2);
@@ -123,13 +116,11 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
     }
 
     @Override
-    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
-                                         Preference preference) {
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         // 进入关于界面
         if (preference.getKey().equals("ABOUT_AUTHOR")) {
             startActivity(new Intent(this, AboutAuthor.class));
-            overridePendingTransition(android.R.anim.slide_out_right,
-                    android.R.anim.slide_in_left);
+            overridePendingTransition(android.R.anim.slide_out_right, android.R.anim.slide_in_left);
             // 设置歌词字体的颜色
         } else if (preference.getKey().equals("SET_FONT_COLOR")) {
             showChoiceDialog();
@@ -137,12 +128,9 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
         } else if (preference.getKey().equals("SET_FONT_SIZE")) {
             showSetSizeDialog2();
         } else if (preference.getKey().equals("LRC_IS_SHOW")) {
-            setFontColorPreference.setEnabled(!setFontColorPreference
-                    .isEnabled());
-            setFontSizePreference
-                    .setEnabled(!setFontSizePreference.isEnabled());
-            setFontAlphaPreference.setEnabled(!setFontAlphaPreference
-                    .isEnabled());
+            setFontColorPreference.setEnabled(!setFontColorPreference.isEnabled());
+            setFontSizePreference.setEnabled(!setFontSizePreference.isEnabled());
+            setFontAlphaPreference.setEnabled(!setFontAlphaPreference.isEnabled());
         } else if (preference.getKey().equals("SetStreamVolume")) {
             setStreamVolumnDialog();
         } else if (preference.getKey().equals("SET_FONT_ALPHA")) {
@@ -173,10 +161,8 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
 
     // * 设置音量
     private void setStreamVolumnDialog() {
-        View view = LayoutInflater.from(getApplicationContext()).inflate(
-                R.layout.streamvolumn, null);
-        final SeekBar seekBarVolume = (SeekBar) view
-                .findViewById(R.id.seekBarStreamVolumn_id);
+        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.streamvolumn, null);
+        final SeekBar seekBarVolume = (SeekBar) view.findViewById(R.id.seekBarStreamVolumn_id);
         seekBarVolume.setMax(maxVolume);
         seekBarVolume.setProgress(currentVolume);
         seekBarVolume.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -201,15 +187,12 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
                 .setIcon(R.drawable.info)
                 .setTitle(R.string.setstreamvolumn_dialog_title)
                 .setView(view)
-                .setPositiveButton(R.string.dailog_ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                set_stream_volume.setSummary("当前系统音量:"
-                                        + currentVolume);
-                                dialog.dismiss();
-                            }
-                        }).show();
+                .setPositiveButton(R.string.dailog_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        set_stream_volume.setSummary("当前系统音量:" + currentVolume);
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 
     private void showChoiceDialog() {
@@ -226,14 +209,13 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
                         // dialog.dismiss();
                     }
                 })
-                .setPositiveButton(R.string.dailog_ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                showSetColorDialog(index_);
-                                dialog.dismiss();
-                            }
-                        }).show();
+                .setPositiveButton(R.string.dailog_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int whichButton) {
+                        showSetColorDialog(index_);
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 
     // 显示设置歌词字体颜色的对话框
@@ -273,33 +255,28 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
                         editor.commit();
                     }
                 })
-                .setPositiveButton(R.string.dailog_ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                dialog.dismiss();
-                            }
-                        })
-                .setNegativeButton(R.string.dailog_cancle,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                dialog.dismiss();
-                            }
-                        }).show();
+                .setPositiveButton(R.string.dailog_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int whichButton) {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.dailog_cancle, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int whichButton) {
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 
     // 显示设置歌词字体大小的对话框
     private void showSetSizeDialog2() {
-        View view = LayoutInflater.from(getApplicationContext()).inflate(
-                R.layout.dialog_view, null);
+        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.dialog_view, null);
         final TextView text1 = (TextView) view.findViewById(R.id.text1);
         final TextView text2 = (TextView) view.findViewById(R.id.text2);
 
-        final SeekBar seekBar_current = (SeekBar) view
-                .findViewById(R.id.seekBar_current_id);
-        final SeekBar seekBar_notcurrent = (SeekBar) view
-                .findViewById(R.id.seekBar_not_current_id);
+        final SeekBar seekBar_current = (SeekBar) view.findViewById(R.id.seekBar_current_id);
+        final SeekBar seekBar_notcurrent = (SeekBar) view.findViewById(R.id.seekBar_not_current_id);
         seekBar_current.setMax(60);
         seekBar_notcurrent.setMax(60);
 
@@ -308,101 +285,78 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
         text1.setText("高亮歌词的大小:" + seekBar_current.getProgress());
         text2.setText("非高亮歌词的大小:" + seekBar_notcurrent.getProgress());
 
-        seekBar_current
-                .setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        seekBar_current.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                        text1.setText("高亮歌词的大小:" + seekBar.getProgress());
-                    }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                text1.setText("高亮歌词的大小:" + seekBar.getProgress());
+            }
 
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-                    }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar,
-                                                  int progress, boolean fromUser) {
-                        text1.setText("高亮歌词的大小:" + progress);
-                        MyFloatView.colorFont
-                                .setFont_current_size(seekBar_current
-                                        .getProgress());
-                    }
-                });
-        seekBar_notcurrent
-                .setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                text1.setText("高亮歌词的大小:" + progress);
+                MyFloatView.colorFont.setFont_current_size(seekBar_current.getProgress());
+            }
+        });
+        seekBar_notcurrent.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                        text2.setText("非高亮歌词的大小:" + seekBar.getProgress());
-                    }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                text2.setText("非高亮歌词的大小:" + seekBar.getProgress());
+            }
 
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-                    }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar,
-                                                  int progress, boolean fromUser) {
-                        text2.setText("非高亮歌词的大小:" + progress);
-                    }
-                });
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                text2.setText("非高亮歌词的大小:" + progress);
+            }
+        });
         new AlertDialog.Builder(AppPreferenceActivity.this)
                 .setIcon(R.drawable.info)
                 .setTitle(R.string.setfontsize_dialog_title)
                 .setView(view)
-                .setPositiveButton(R.string.dailog_ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                setFontSizePreference.setSummary("高亮色："
-                                        + seekBar_current.getProgress()
-                                        + "/非高亮色："
-                                        + seekBar_notcurrent.getProgress());
-                                LrcView.colorFont
-                                        .setFont_current_size(seekBar_current
-                                                .getProgress());
-                                LrcView.colorFont
-                                        .setFont_not_current_size(seekBar_notcurrent
-                                                .getProgress());
-                                MyFloatView.colorFont
-                                        .setFont_current_size(seekBar_current
-                                                .getProgress());
-                                MyFloatView.colorFont
-                                        .setFont_not_current_size(seekBar_notcurrent
-                                                .getProgress());
-                                // save setting.xml
-                                SharedPreferences.Editor editor = sharedPreferences
-                                        .edit();
-                                editor.putInt("LRCFontSizeCurrent",
-                                        seekBar_current.getProgress());
-                                editor.putInt("LRCFontSizeNotCurrent",
-                                        seekBar_notcurrent.getProgress());
-                                // 提交任务保存
-                                editor.commit();
-                                dialog.dismiss();
-                            }
-                        })
-                .setNegativeButton(R.string.dailog_cancle,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                dialog.dismiss();
-                            }
-                        }).show();
+                .setPositiveButton(R.string.dailog_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        setFontSizePreference.setSummary("高亮色："
+                                + seekBar_current.getProgress()
+                                + "/非高亮色："
+                                + seekBar_notcurrent.getProgress());
+                        LrcView.colorFont.setFont_current_size(seekBar_current.getProgress());
+                        LrcView.colorFont.setFont_not_current_size(seekBar_notcurrent.getProgress());
+                        MyFloatView.colorFont.setFont_current_size(seekBar_current.getProgress());
+                        MyFloatView.colorFont.setFont_not_current_size(seekBar_notcurrent.getProgress());
+                        // save setting.xml
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putInt("LRCFontSizeCurrent", seekBar_current.getProgress());
+                        editor.putInt("LRCFontSizeNotCurrent", seekBar_notcurrent.getProgress());
+                        // 提交任务保存
+                        editor.commit();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.dailog_cancle, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int whichButton) {
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 
     // 显示设置歌词字体透明度的对话框
     private void setFontAlphaDialog() {
-        View view = LayoutInflater.from(getApplicationContext()).inflate(
-                R.layout.dialog_view, null);
+        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.dialog_view, null);
         final TextView text1 = (TextView) view.findViewById(R.id.text1);
         final TextView text2 = (TextView) view.findViewById(R.id.text2);
 
-        final SeekBar seekBar_current = (SeekBar) view
-                .findViewById(R.id.seekBar_current_id);
-        final SeekBar seekBar_notcurrent = (SeekBar) view
-                .findViewById(R.id.seekBar_not_current_id);
+        final SeekBar seekBar_current = (SeekBar) view.findViewById(R.id.seekBar_current_id);
+        final SeekBar seekBar_notcurrent = (SeekBar) view.findViewById(R.id.seekBar_not_current_id);
         // 设置进度条的最大值
         seekBar_current.setMax(255);
         seekBar_notcurrent.setMax(255);
@@ -413,87 +367,67 @@ public class AppPreferenceActivity extends PreferenceActivity implements OnPrefe
         text1.setText("高亮歌词的透明度:" + seekBar_current.getProgress());
         text2.setText("非高亮歌词的透明度:" + seekBar_notcurrent.getProgress());
 
-        seekBar_current
-                .setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        seekBar_current.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                        text1.setText("高亮歌词的透明度:" + seekBar.getProgress());
-                    }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                text1.setText("高亮歌词的透明度:" + seekBar.getProgress());
+            }
 
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-                    }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar,
-                                                  int progress, boolean fromUser) {
-                        text1.setText("高亮歌词的透明度:" + progress);
-                        MyFloatView.colorFont
-                                .setFont_current_alpha(seekBar_current
-                                        .getProgress());
-                    }
-                });
-        seekBar_notcurrent
-                .setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                text1.setText("高亮歌词的透明度:" + progress);
+                MyFloatView.colorFont.setFont_current_alpha(seekBar_current.getProgress());
+            }
+        });
+        seekBar_notcurrent.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                        text2.setText("非高亮歌词的透明度:" + seekBar.getProgress());
-                    }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                text2.setText("非高亮歌词的透明度:" + seekBar.getProgress());
+            }
 
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-                    }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar,
-                                                  int progress, boolean fromUser) {
-                        text2.setText("非高亮歌词的透明度:" + progress);
-                    }
-                });
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                text2.setText("非高亮歌词的透明度:" + progress);
+            }
+        });
         new AlertDialog.Builder(AppPreferenceActivity.this)
                 .setIcon(R.drawable.info)
                 .setTitle(R.string.setfontsize_dialog_title)
                 .setView(view)
-                .setPositiveButton(R.string.dailog_ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                setFontAlphaPreference.setSummary("高亮色："
-                                        + seekBar_current.getProgress()
-                                        + "/非高亮色："
-                                        + seekBar_notcurrent.getProgress());
-                                LrcView.colorFont
-                                        .setFont_current_alpha(seekBar_current
-                                                .getProgress());
-                                LrcView.colorFont
-                                        .setFont_not_current_alpha(seekBar_notcurrent
-                                                .getProgress());
-                                MyFloatView.colorFont
-                                        .setFont_current_alpha(seekBar_current
-                                                .getProgress());
-                                MyFloatView.colorFont
-                                        .setFont_not_current_alpha(seekBar_notcurrent
-                                                .getProgress());
-                                // save in setting.xml
-                                SharedPreferences.Editor editor = sharedPreferences
-                                        .edit();
-                                editor.putInt("LRCFontAlphaCurrent",
-                                        seekBar_current.getProgress());
-                                editor.putInt("LRCFontAlphaNotCurrent",
-                                        seekBar_notcurrent.getProgress());
-                                // 提交任务保存
-                                editor.commit();
-                                dialog.dismiss();
-                            }
-                        })
-                .setNegativeButton(R.string.dailog_cancle,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                dialog.dismiss();
-                            }
-                        }).show();
+                .setPositiveButton(R.string.dailog_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        setFontAlphaPreference.setSummary("高亮色："
+                                + seekBar_current.getProgress()
+                                + "/非高亮色："
+                                + seekBar_notcurrent.getProgress());
+                        LrcView.colorFont.setFont_current_alpha(seekBar_current.getProgress());
+                        LrcView.colorFont.setFont_not_current_alpha(seekBar_notcurrent.getProgress());
+                        MyFloatView.colorFont.setFont_current_alpha(seekBar_current.getProgress());
+                        MyFloatView.colorFont.setFont_not_current_alpha(seekBar_notcurrent.getProgress());
+                        // save in setting.xml
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putInt("LRCFontAlphaCurrent", seekBar_current.getProgress());
+                        editor.putInt("LRCFontAlphaNotCurrent", seekBar_notcurrent.getProgress());
+                        // 提交任务保存
+                        editor.commit();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.dailog_cancle, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int whichButton) {
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 }
