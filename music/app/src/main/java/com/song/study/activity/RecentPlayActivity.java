@@ -1,6 +1,5 @@
 package com.song.study.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -11,7 +10,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.song.study.R;
-import com.song.study.adpter.MusicAdapter;
+import com.song.study.adpter.MusicListAdapter;
 import com.song.study.base.BaseActivity;
 import com.song.study.musicobject.Music;
 import com.song.study.musicutil.AnimCommon;
@@ -23,7 +22,7 @@ import java.util.List;
 public class RecentPlayActivity extends BaseActivity {
 
     private ListView mListView;
-    private MusicAdapter adapter;
+    private MusicListAdapter adapter;
     private List<Music> listMusics;
 
     @Override
@@ -35,7 +34,7 @@ public class RecentPlayActivity extends BaseActivity {
         mListView = (ListView) findViewById(R.id.listView_id);
         mListView.setBackgroundResource(R.drawable.listbg1);
         List<Music> listMusics = MusicService.recentMusics;
-        adapter = new MusicAdapter(this, listMusics);
+        adapter = new MusicListAdapter(this, listMusics);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new OnItemClickListener() {
 

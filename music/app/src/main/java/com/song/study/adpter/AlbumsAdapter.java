@@ -45,24 +45,19 @@ public class AlbumsAdapter extends BaseAdapter {
         // 注意代码的书写系统将会减少创建很多View。性能得到了很大的提升。
         // if (arg1 == null) ！！！！
         if (arg1 == null) {
-            arg1 = LayoutInflater.from(this.context).inflate(
-                    R.layout.musicitem, null);
+            arg1 = LayoutInflater.from(this.context).inflate(R.layout.item, null);
         }
-
         ImageView imageView = (ImageView) arg1.findViewById(R.id.imageView_id);
         imageView.setImageResource(R.drawable.album);
 
         // 因为用的是同一个布局文件，这里显示专辑名字
-        TextView music_name = (TextView) arg1
-                .findViewById(R.id.musicname_show_textView_id);
+        TextView music_name = (TextView) arg1.findViewById(R.id.musicname_show_textView_id);
         music_name.setText(albums_count.get(arg0).getAlbum());
         // 这里显示专辑的作者
-        TextView music_singer = (TextView) arg1
-                .findViewById(R.id.musicsinger_show_textView_id);
+        TextView music_singer = (TextView) arg1.findViewById(R.id.musicsinger_show_textView_id);
         music_singer.setText(albums_count.get(arg0).getSinger());
         // 这里显示专辑的发行年份
-        TextView music_time = (TextView) arg1
-                .findViewById(R.id.musictime_show_textView_id);
+        TextView music_time = (TextView) arg1.findViewById(R.id.musictime_show_textView_id);
         String year = albums_count.get(arg0).getYear();
         if (year == null) {
             year = "未知年份";

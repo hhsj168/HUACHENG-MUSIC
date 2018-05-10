@@ -45,7 +45,7 @@ public class AlbumsAdapter2 extends BaseAdapter {
 		// if (arg1 == null) ！！！！
 		if (arg1 == null) {
 			arg1 = LayoutInflater.from(this.context).inflate(
-					R.layout.musicitem, null);
+					R.layout.item_music_list, null);
 		}
 		ImageView imageView = (ImageView) arg1.findViewById(R.id.imageView_id);
 		imageView.setImageResource(R.drawable.artist);

@@ -1,34 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-   
-   <LinearLayout
+    <ImageView
+        android:id="@+id/imageView_id"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"/>
+
+    <LinearLayout
+        android:layout_centerVertical="true"
         android:id="@+id/linearLayout_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/imageView_id"
         android:orientation="vertical"
-        android:paddingLeft="15dp" >
+        android:paddingLeft="15dp">
 
-      
+
         <TextView
             android:id="@+id/musicname_show_textView_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/dailog_ok"
             android:padding="2dp"
+            android:text="@string/dailog_ok"
             android:textColor="@color/whilte"
-            android:textSize="20sp" />
+            android:textSize="20sp"/>
 
         <TextView
             android:id="@+id/musicsinger_show_textView_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/dailog_ok"
             android:padding="2dp"
+            android:text="@string/dailog_ok"
             android:textColor="@color/whilte"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
     </LinearLayout>
 
     <TextView
@@ -39,6 +48,6 @@
         android:layout_gravity="center"
         android:paddingRight="10dp"
         android:text="@string/dailog_ok"
-        android:textColor="@color/whilte" />
+        android:textColor="@color/whilte"/>
 
 </RelativeLayout>

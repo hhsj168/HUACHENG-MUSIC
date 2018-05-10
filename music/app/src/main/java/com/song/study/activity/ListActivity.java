@@ -17,7 +17,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.song.study.R;
-import com.song.study.adpter.MusicAdapter;
+import com.song.study.adpter.MusicListAdapter;
 import com.song.study.base.BaseActivity;
 import com.song.study.musicobject.Music;
 import com.song.study.musicutil.AnimCommon;
@@ -32,7 +32,7 @@ public class ListActivity extends BaseActivity {
     private static final String TAG = "MusicListFrament";
     public List<Music> musics;
     private ListView mListView;
-    private MusicAdapter musicAdapter;
+    private MusicListAdapter musicAdapter;
     private long firstTime = 0;
     // 保存设置文件的SharedPreferences对象
     private SharedPreferences sharedPreferences;
@@ -50,7 +50,7 @@ public class ListActivity extends BaseActivity {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                musicAdapter = new MusicAdapter(ListActivity.this, musics);
+                musicAdapter = new MusicListAdapter(ListActivity.this, musics);
                 mListView.setAdapter(musicAdapter);
             }
         };

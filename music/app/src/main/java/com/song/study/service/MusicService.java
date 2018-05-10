@@ -69,7 +69,7 @@ public class MusicService extends Service {
     private InOutCallReceiver receiver_inoutcall = null;
     private List<Music> musics /* = MusicListFrament.musics */;
     // 当前播放的下标
-    private int current_index = 0;
+    private int current_index = -1;
     // 当前播放的下标
     private int current_index_playMode = Constant.CMD_ORDER_BY_ORDER;
     // 进度条线程
@@ -95,14 +95,20 @@ public class MusicService extends Service {
 
     private MessageEvent updateUiEvent;
 
+    private static MusicService musicService;
+
+    public static final MusicService getInstance() {
+        return musicService;
+    }
+
     private void updateUi(Message msg) {
-        if (updateUiEvent == null){
+        if (updateUiEvent == null) {
             updateUiEvent = new MessageEvent("update_ui");
 
         }
         int[] positions = new int[2];
         positions[0] = mediaPlayer.getCurrentPosition();
-        positions[1] =  mediaPlayer.getDuration();
+        positions[1] = mediaPlayer.getDuration();
         updateUiEvent.setData(positions);
         notifyMusic(updateUiEvent);
 
@@ -110,7 +116,6 @@ public class MusicService extends Service {
 //        MusicActivity.mSeekBar.setProgress(pos);
 //        MusicActivity.mTextView_music_start_time.setText(MusicUtil.formatTime(mediaPlayer.getCurrentPosition()));
     }
-
 
 
     /**
@@ -153,7 +158,7 @@ public class MusicService extends Service {
         // 创建悬浮窗口
         createView();
         super.onCreate();
-
+        musicService = this;
     }
 
 
@@ -189,13 +194,14 @@ public class MusicService extends Service {
     }
 
     private static MessageEvent seekbarChangeEvent;
+
     // SeekBar的监听器
     public static OnSeekBarChangeListener seekBarChangeListenerFactory() {
         return new OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
-                if (seekbarChangeEvent == null){
+                if (seekbarChangeEvent == null) {
                     seekbarChangeEvent = new MessageEvent("seekbar_change");
                 }
                 seekbarChangeEvent.setData(arg1);

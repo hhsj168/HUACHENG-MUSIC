@@ -14,7 +14,7 @@ import android.widget.ListView;
 
 import com.song.study.R;
 import com.song.study.activity.MusicActivity;
-import com.song.study.adpter.MusicAdapter;
+import com.song.study.adpter.MusicListAdapter;
 import com.song.study.musicobject.Music;
 import com.song.study.musicutil.AnimCommon;
 import com.song.study.conts.Constant;
@@ -28,7 +28,7 @@ import java.util.List;
 public class RecentPlaylListFragment extends ListFragment {
 
     private ListView mListView;
-    private MusicAdapter adapter;
+    private MusicListAdapter adapter;
     private List<Music> listMusics;
 
     @Override
@@ -42,7 +42,7 @@ public class RecentPlaylListFragment extends ListFragment {
         mListView = (ListView) view.findViewById(R.id.listView_id);
         mListView.setBackgroundResource(R.drawable.listbg1);
         List<Music> listMusics = MusicService.recentMusics;
-        adapter = new MusicAdapter(getActivity(), listMusics);
+        adapter = new MusicListAdapter(getActivity(), listMusics);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new OnItemClickListener() {
 

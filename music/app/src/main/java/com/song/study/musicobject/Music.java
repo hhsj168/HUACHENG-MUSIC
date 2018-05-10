@@ -1,9 +1,9 @@
 package com.song.study.musicobject;
 
 import android.net.Uri;
+import android.os.Parcel;
 
-public class Music {
-
+public class Music extends SelectStatus {
 
     public static final String MUSIC_TYPE_MP3 = "mp3";
     public static final String MUSIC_TYPE_WAV = "wav";

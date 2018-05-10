@@ -46,7 +46,7 @@ public class MainActivity extends BaseActivity {
     private long firstTime = 0;
     TabLayout tabLayout;
 
-    String[] tabTitles = {"所有曲目", "艺术家列表", "最近播放", "发现"};
+    String[] tabTitles = {"全部", "艺术家", "最近", "发现"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -61,7 +61,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
         // if (convertView == null) ！！！！
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(
-                    R.layout.musicitem, null);
+                    R.layout.item_music_list, null);
         }
 
         ImageView imageView = (ImageView) convertView

@@ -5,14 +5,15 @@
 
 
     <android.support.design.widget.TabLayout
-        android:id="@+id/tablayout"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/tablayout"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@color/theme_color"
         app:tabIndicatorColor="@color/whilte"
         app:tabIndicatorHeight="2dp"
         app:tabSelectedTextColor="@color/yellow"
+        app:tabTextAppearance="@style/Tab_style"
         app:tabTextColor="@color/whilte">
 
     </android.support.design.widget.TabLayout>
